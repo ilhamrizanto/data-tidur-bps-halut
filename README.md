@@ -267,8 +267,3 @@ Contoh respons ringkasan `/analyze`:
 | File sudah diunggah tapi tidak muncul | Lihat kolom **Status** di riwayat dashboard (Proses/Gagal + pesan) |
 
 ---
-
-## Pengembangan Lanjutan (Ide)
-- Batas wilayah (GeoJSON) kecamatan Halmahera Utara untuk peta choropleth penuh.
-- Cron/antrian analisis untuk file besar; riwayat periode ganda (multi-tahun).
-- Notifikasi email saat ada data tidur baru; kompilasi Tailwind untuk produksi.
