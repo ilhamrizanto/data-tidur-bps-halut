@@ -1,0 +1,14 @@
+# =============================================================
+#  Layanan analisis "Deteksi Data Tidur" — dependensi Python
+#  Diuji pada Python 3.15 (rilis stabil terbaru, Oktober 2026).
+#  Minimal Python 3.12 — semua paket di bawah otomatis mengambil
+#  versi terbaru yang tersedia di PyPI.
+# =============================================================
+
+fastapi>=0.162                    # framework API (rilis terbaru 0.162.0)
+uvicorn[standard]>=0.44           # server ASGI
+python-multipart>=0.0.20          # wajib untuk upload multipart FastAPI
+pandas>=2.3                       # baca CSV/Excel (kompatibel pandas 2.x & 3.x)
+numpy>=2.3                        # statistik (std, mean, dsb.)
+openpyxl>=3.1.5                   # mesin pembaca .xlsx
+mysql-connector-python>=9.3       # penulisan hasil analisis ke MySQL

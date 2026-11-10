@@ -1,0 +1,11 @@
+# Lapisan keamanan folder unggahan (Apache/XAMPP)
+# 1. Larang eksekusi skrip apa pun dari dalam folder ini
+<FilesMatch "\.(?i:php|phtml|php3|php4|php5|php7|php8|phar|pl|py|cgi|sh|asp|aspx|jsp)$">
+  Require all denied
+</FilesMatch>
+
+# 2. Larang daftar isi (directory listing)
+Options -Indexes
+
+# Catatan: file CSV/XLSX tetap boleh diunduh langsung oleh pemiliknya,
+# tetapi tidak akan pernah dieksekusi sebagai kode.
