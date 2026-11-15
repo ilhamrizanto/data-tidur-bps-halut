@@ -151,14 +151,14 @@ $tahunKini  = date('Y');
       </div>
 
       <div class="flex text-center flex-col items-center gap-5 p-7">
-        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
+        <img src="assets/img/alifa.png" class="w-32 h-32 rounded-full" alt="">
         <div class="min-w-0">
           <p class="text-xl font-extrabold tracking-tight text-slate-900">Alifa Anindya</p>
         </div>
       </div>
 
       <div class="flex text-center flex-col items-center gap-5 p-7">
-        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
+        <img src="assets/img/Cici.jpg.jpeg" class="w-32 h-32 rounded-full" alt="">
         <div class="min-w-0">
           <p class="text-xl font-extrabold tracking-tight text-slate-900">Meylin Man Hasan</p>
         </div>
@@ -172,7 +172,7 @@ $tahunKini  = date('Y');
 
     <div class="mt-7 flex flex-col items-center text-center gap-5 rounded-xl bg-white p-7 shadow-card ring-1 ring-slate-100 lg:max-w-3xl">
       <div class="min-w-0 flex flex-col items-center">
-        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
+        <img src="assets/img/frida.jpeg" class="w-32 h-32 rounded-full" alt="">
         <p class="mt-4 text-xl font-extrabold tracking-tight text-slate-900">Frida Oktafiana Arianti</p>
         <p class="text-sm font-bold text-violet-600">Mentor</p>
         <p class="mt-3 text-sm leading-relaxed text-slate-500">
@@ -243,7 +243,7 @@ $tahunKini  = date('Y');
       <!-- CARD 4 -->
       <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
         <div class="w-full">
-          <img src="assets/img/tim-pengembang2.jpeg" class="w-full h-auto object-cover" alt="tim-pengembang-web">
+          <img src="assets/img/yayaya.jpeg" class="w-full h-auto object-cover" alt="tim-pengembang-web">
         </div>
         
         <div class="p-7 flex-1">
