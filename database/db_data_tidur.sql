@@ -1,12 +1,3 @@
--- =====================================================================
---  DETEKSI DATA TIDUR — Skema Database MySQL (versi 2)
---  Unit analisis: KOMODITAS (nama + kualitas) × KECAMATAN, per BULAN.
---  "Data tidur" = harga komoditas yang KONSTAN antar bulan.
---  Cara import: buka http://localhost/phpmyadmin → menu "Import"
---  → pilih file schema.sql ini → Klik "Go/Kirim".
---  Atau lewat terminal: mysql -u root < schema.sql
--- =====================================================================
-
 CREATE DATABASE IF NOT EXISTS db_data_tidur
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

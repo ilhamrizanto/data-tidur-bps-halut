@@ -320,7 +320,11 @@ def inspect_file(path: str, filename: str = "") -> dict:
         # "Nama Kec" / "Kecamatan" diprioritaskan di atas kode "Kec"
         "kecamatan_col": cari(("nama kec", "kecamatan", "kelurahan", "desa",
                                "kota", "wilayah", "daerah", "lokasi", "region")),
-        "kualitas_col":  cari(("kualitas", "mutu", "grade", "spesifikasi", "quality")),
+        # "Nama Kualitas" DIPRIORITASKAN di atas "Kode Kualitas"/"Status Kualitas"
+        # (file SHPED menaruh "Kode Kualitas" sebelum "Nama Kualitas" — tanpa
+        # prioritas ini, tebakan jatuh ke kolom kode, bukan nama kualitas)
+        "kualitas_col":  cari(("nama kualitas", "kualitas nama",
+                               "kualitas", "mutu", "grade", "spesifikasi", "quality")),
         "kuesioner_col": cari(("kuesioner", "kode kuesioner", "no kuesioner")),
         "satuan_col":    cari(("satuan", "unit")),
         "value_col":     cari(("harga", "price", "nilai", "value")),

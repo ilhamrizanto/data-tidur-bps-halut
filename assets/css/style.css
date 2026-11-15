@@ -1,13 +1,6 @@
-/* =====================================================================
-   style.css — Gaya tambahan di atas Tailwind CSS
-   Font situs: DM Sans (dipakai keseluruhan halaman via config Tailwind).
-   ===================================================================== */
-
-/* Smooth scroll untuk klik kartu ringkasan & nav */
 html { scroll-behavior: smooth; }
 
-/* Hero memakai DM Sans juga (fallback CSS bila config Tailwind gagal dimuat) */
-.font-hero { font-family: 'DM Sans', 'Segoe UI', 'system-ui', sans-serif; }
+* { font-family: 'DM Sans', 'Segoe UI', 'system-ui', sans-serif; }
 
 /* Kompensasi sticky navbar saat lompat ke section */
 section[id] { scroll-margin-top: 5.5rem; }
@@ -152,3 +145,7 @@ section[id] { scroll-margin-top: 5.5rem; }
   box-shadow: 0 0 0 1px rgb(15 23 42 / .15);
 }
 .rank-harga { font-size: .78rem; font-weight: 800; color: #0f172a; white-space: nowrap; }
+
+/* Kartu ikon mengambang di sisi kanan layar*/
+.float-btn { transition: transform .15s ease, background-color .15s ease; }
+.float-btn:hover { transform: translateY(-2px); }

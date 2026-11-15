@@ -1,35 +1,8 @@
-/* =====================================================================
-   landing.js — Logika data SHPED (halaman publik + dashboard admin) — v3
-   1. Ambil seluruh data dari api/data.php?action=landing (1 request)
-   2. 3 kartu ringkasan di halaman publik (angka sesuai isi file Excel
-      yang diunggah admin)
-   3. Informasi Data SHPED: dropdown KUESIONER (paling kiri — kode kuesioner
-      dari kolom "Kuesioner" file SHPED, mis. HKD-1, HKD-2.1 — memfilter
-      daftar komoditas pada card/grid agar hanya kuesioner terpilih),
-      Komoditas (+daftar kualitas), Tahun, Kecamatan (default: Tobelo)
-      + detail harga bulanan + grafik tren
-      · Dropdown Tahun otomatis berisi tahun dari SEMUA unggahan yang
-        selesai dianalisis — unggah file 2025 lalu 2026 → kedua tahun
-        langsung muncul; memilih tahun milik unggahan lain memuat
-        ulang data dari server (api/data.php?action=landing&tahun=…)
-   4. Grid grafik ala PIHPS Nasional: 1 komoditas = 1 grafik,
-      4 kolom × 6 baris (24) per halaman, navigasi halaman klik
-      (bagian ini hanya dirender di dashboard admin)
-   5. Peta harga Kabupaten Halmahera Utara (hanya di dashboard admin):
-      warna kecamatan dari harga terendah (hijau) s.d. tertinggi (merah)
-   6. Kelengkapan Data (hanya di dashboard admin): tabel seluruh data
-      (tidur + bergerak) dengan tab, pencarian, halaman, tombol unduh
-   Catatan arsitektur: file ini dipakai index.php DAN dashboard.php.
-   Semua fungsi memeriksa keberadaan elemen (elemen bagian yang tidak ada
-   di halaman tersebut otomatis dilewati). Seluruh kode dibungkus IIFE agar
-   aman dimuat berdampingan dengan dashboard.js tanpa bentrokan konstanta.
-   ===================================================================== */
-
 (function () {
 'use strict';
 
 /* ---------------- Konstanta ---------------- */
-const DEFAULT_KEC    = 'Tobelo';   // default kecamatan sesuai permintaan
+const DEFAULT_KEC    = 'semua';   // default kecamatan: SEMUA KECAMATAN (rata-rata)
 const PER_HAL_GRAFIK = 24;         // 4 kolom × 6 baris
 const PER_HAL_TABEL  = 25;
 
@@ -285,13 +258,13 @@ function renderListKuesioner() {
     return unik.size;
   };
 
-  const tombol = [{ k: 'semua', label: 'Semua Kuesioner', sub: `${DATA.seri.length.toLocaleString('id-ID')} seri data tanpa filter` }]
+  const tombol = [{ k: 'semua', label: 'Semua Jenis Dokumen', sub: `${DATA.seri.length.toLocaleString('id-ID')} seri data tanpa filter` }]
     .concat(daftar.map(k => ({ k, label: k, sub: `${jumlah(k).toLocaleString('id-ID')} komoditas` })));
 
   if (daftar.length === 0) {
     box.innerHTML =
       '<p class="px-3 py-3 text-[11px] leading-relaxed text-slate-400">' +
-      'Belum ada kode kuesioner pada data ini. Unggah ulang file dengan kolom ' +
+      'Belum ada jenis dokumen (kode kuesioner) pada data ini. Unggah ulang file dengan kolom ' +
       '<b>Kuesioner</b> dipilih di halaman upload, lalu analisis kembali.</p>';
     return;
   }
@@ -437,7 +410,7 @@ async function muatDataTahun(tahun) {
       state.kualitas = grup[0].kualitasList[0];
     }
     if (!kecamatanList().includes(state.kecamatan)) {
-      state.kecamatan = kecamatanList().includes(DEFAULT_KEC) ? DEFAULT_KEC : kecamatanList()[0];
+      state.kecamatan = 'semua';   // default: semua kecamatan (rata-rata)
     }
     state.halGrafik = 0;
     state.halTabel = 0;
@@ -510,7 +483,7 @@ function renderSHPED() {
   if (!S) return;
 
   // Label tombol dropdown
-  if ($('lblKuesioner')) $('lblKuesioner').textContent = state.kuesioner === 'semua' ? 'Semua Kuesioner' : state.kuesioner;
+  if ($('lblKuesioner')) $('lblKuesioner').textContent = state.kuesioner === 'semua' ? 'Jenis Dokumen' : state.kuesioner;
   if ($('lblKomoditas')) $('lblKomoditas').textContent = `${state.nama} — ${state.kualitas}`;
   if ($('lblTahun'))     $('lblTahun').textContent = state.tahun === 'semua' ? 'Semua Tahun' : state.tahun;
   if ($('lblKecamatan')) $('lblKecamatan').textContent = state.kecamatan === 'semua' ? 'Semua Kecamatan' : state.kecamatan;
@@ -541,7 +514,7 @@ function renderSHPED() {
       ` · periode ${bulanID(S.bulanMulai)} – ${bulanID(S.bulanAkhir)}`;
     $('dtlHarga').textContent = rp(S.hargaAkhir);
     $('dtlSatuan').textContent = S.satuan;
-    $('dtlBulanAkhir').textContent = `per ${bulanID(S.bulanAkhir)} `;
+    $('dtlBulanAkhir').textContent = `per ${bulanID(S.bulanAkhir)} · data diperbarui ${tglID(R.diperbarui)}`;
     $('dtlMax').textContent = rp(S.max);
     $('dtlMin').textContent = rp(S.min);
     $('dtlPerubahan').innerHTML = `<span class="${S.perubahan > 0.005 ? 'text-rose-600' : S.perubahan < -0.005 ? 'text-emerald-600' : 'text-slate-500'}">${S.perubahan > 0 ? '+' : ''}${S.perubahan.toFixed(1)}%</span>`;
@@ -717,7 +690,7 @@ function renderGrafikGrid() {
   if ($('chartInfo')) {
     $('chartInfo').textContent = unit.length
       ? `Menampilkan ${hal * PER_HAL_GRAFIK + 1}–${hal * PER_HAL_GRAFIK + potongan.length} dari ${unit.length.toLocaleString('id-ID')} grafik komoditas · halaman ${hal + 1}/${totalHal}` +
-        (state.kuesioner !== 'semua' ? ` · kuesioner ${state.kuesioner}` : '')
+        (state.kuesioner !== 'semua' ? ` · jenis dokumen ${state.kuesioner}` : '')
       : 'Tidak ada data untuk filter ini.';
   }
 
@@ -1025,12 +998,13 @@ async function init() {
     DATA = json.data;
     TAHUN_TERSEDIA = DATA.tahun_tersedia || [];   // tahun dari SEMUA unggahan
 
-    // Default filter: kuesioner semua · komoditas pertama · tahun semua · kecamatan Tobelo
+    // Default filter: jenis dokumen semua · komoditas pertama · tahun semua ·
+    // kecamatan SEMUA (rata-rata antar kecamatan)
     const grup = grupKomoditas();
     state.kuesioner = 'semua';
     state.nama = grup[0].nama;
     state.kualitas = grup[0].kualitasList[0];
-    state.kecamatan = kecamatanList().includes(DEFAULT_KEC) ? DEFAULT_KEC : kecamatanList()[0];
+    state.kecamatan = 'semua';
     state.tahun = 'semua';
 
     renderRingkasan();
@@ -1052,4 +1026,31 @@ window.addEventListener('resize', () => {
 });
 init();
 
+})();
+
+(function () {
+  /* Menu mobile buka/tutup */
+  var b = document.getElementById('btnMenu'), m = document.getElementById('mobileMenu');
+  if (b && m) b.addEventListener('click', function () { m.classList.toggle('hidden'); });
+
+  /* Jam langsung WIT (Maluku Utara = Asia/Jayapura) — ala jam di kanan atas referensi */
+  // var jam = document.getElementById('jamWit');
+  // if (jam) {
+  //   var tampil = function () {
+  //     try {
+  //       jam.textContent = new Intl.DateTimeFormat('id-ID', {
+  //         hour: '2-digit', minute: '2-digit', second: '2-digit',
+  //         hour12: false, timeZone: 'Asia/Jayapura'
+  //       }).format(new Date()).replace(/\./g, ':') + ' WIT';
+  //     } catch (err) { jam.textContent = ''; }
+  //   };
+  //   tampil();
+  //   setInterval(tampil, 1000);
+  // }
+
+  /* Tombol ikon mengambang: kembali ke atas halaman */
+  var up = document.getElementById('btnKeAtas');
+  if (up) up.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 })();

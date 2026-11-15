@@ -1,14 +1,4 @@
 <?php
-/**
- * install.php — Setup awal sekali pakai:
- *   1. Memastikan tabel users ada + role 'viewer' tersedia.
- *   2. Menambah kolom kuesioner pada analisis_seri (migrasi otomatis untuk
- *      database lama — dipakai fitur dropdown filter kuesioner).
- *   3. Membuat akun admin default (admin / admin123) dan akun viewer
- *      default (viewer / viewer123) jika belum ada.
- *   4. Membuat folder uploads/ yang writable.
- * Hapus file ini setelah instalasi selesai (disarankan).
- */
 
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/includes/auth.php';   // helper e() & handle_db_error()
@@ -21,7 +11,7 @@ $phpOk = PHP_VERSION_ID >= 80500;
 try {
     $pdo = db();
 
-    // 1. Jaminan tabel users (bila schema.sql lupa diimpor tabel ini saja)
+    // 1. Jaminan tabel users (bila db_data_tidur.sql lupa diimpor tabel ini saja)
     $pdo->exec("CREATE TABLE IF NOT EXISTS users (
         id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         username   VARCHAR(50)  NOT NULL UNIQUE,

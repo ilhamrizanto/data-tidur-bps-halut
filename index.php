@@ -1,30 +1,45 @@
 <?php
-/**
- * index.php — HALAMAN PUBLIK (sisi user / landing page).
- * Struktur: Hero → 3 Kartu Ringkasan →
- *           Informasi Data SHPED (dropdown kuesioner + komoditas+kualitas/
- *           tahun/kecamatan + detail harga bulanan + grafik tren) →
- *           Metadata Kegiatan Statistik SHPED (pop-up/modal bisa diklik,
- *           isi sesuai dokumen "Metadata Kegiatan Statistik SHPED").
- *
- * Tabel harga bulanan, grid grafik PIHPS, peta harga, dan kelengkapan data
- * HANYA ditampilkan di dashboard.php (dapat dibuka admin maupun viewer).
- * Keterangan "pindah ke dashboard" + tombol Buka Dashboard di halaman publik
- * sudah dihapus karena tidak diperlukan.
- *
- * Seluruh data dimuat sekali via JS dari api/data.php?action=landing.
- */
 
 $page_title = 'Beranda';
 include __DIR__ . '/includes/header.php';
 
-// Admin & viewer boleh membuka dashboard (tabel, grafik, peta, kelengkapan)
 $canPanel = is_admin() || is_viewer();
+
+// ---------------------------------------------------------------------
+// Daftar kuesioner SHPED (PDF) — dibaca OTOMATIS dari folder docs/kuesioner.
+// Tambah/hapus file PDF di folder itu untuk mengubah daftar unduhan;
+// penamaan file mengikuti pola: Kuesioner_HD-1_2026.pdf → label "HD-1 · 2026".
+// ---------------------------------------------------------------------
+$kuesionerPdf = [];
+foreach (glob(__DIR__ . '/docs/kuesioner/*.pdf') ?: [] as $_f) {
+    $_label = str_replace('_', ' ', basename($_f, '.pdf'));          // "Kuesioner HD-1 2026"
+    $_kode  = preg_replace('/^Kuesioner\s+/', '', $_label);         // "HD-1 2026"
+    $_tahun = '';
+    if (preg_match('/\s(\d{4})$/', $_kode, $_m)) {                  // pisah tahun di akhir
+        $_tahun = $_m[1];
+        $_kode  = trim(substr($_kode, 0, -strlen($_m[1])));
+    }
+    $kuesionerPdf[] = [
+        'href'  => 'docs/kuesioner/' . rawurlencode(basename($_f)),
+        'kode'  => $_kode,
+        'tahun' => $_tahun,
+        'grup'  => strtoupper(explode('-', $_kode)[0]),              // HD | HKD
+    ];
+}
+usort($kuesionerPdf, fn($a, $b) => strnatcasecmp($a['kode'], $b['kode']));
+
+// Keterangan tiap kelompok kuesioner (urutan tampil: HD → HKD → lainnya)
+$grupKuesMeta = [
+    'HD'  => ['judul' => 'Kuesioner HD — Harga Perdesaan',
+              'sub'   => 'Responden petani — harga komoditas pertanian & pengeluaran produksi pertanian.'],
+    'HKD' => ['judul' => 'Kuesioner HKD — Harga Konsumen Perdesaan',
+              'sub'   => 'Responden pedagang/penjual pasar — harga barang konsumsi perdesaan.'],
+];
 ?>
 
 <main class="mx-auto max-w-7xl px-4 py-8">
 
-  <!-- ============ HERO (hijau · font DM Sans · foto pasar menempel penuh di kanan) ============ -->
+  <!-- ============ HERO SECTION ============ -->
   <section class="font-hero mb-10 overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 text-white shadow-card">
     <div class="grid items-stretch gap-8 md:grid-cols-2 md:gap-8">
 
@@ -54,7 +69,7 @@ $canPanel = is_admin() || is_viewer();
         </div>
       </div>
 
-      <!-- Kanan: foto pasar — menempel pas ke tepi atas, kanan & bawah hero (tanpa ruang kosong) -->
+      <!-- Kanan: foto pasar -->
       <figure class="relative h-56 md:h-auto md:min-h-[420px]">
         <img src="assets/img/pasar-modern1.jpeg"
              alt="Pasar Modern Tobelo — bangunan putih arsitektur modern dengan aksen merah"
@@ -145,7 +160,7 @@ $canPanel = is_admin() || is_viewer();
 <!-- Terbuka saat kartu "Metadata Kegiatan Statistik" di atas diklik; ditutup
      lewat tombol ✕, tombol Tutup, klik area gelap di luar panel, atau tombol Esc. -->
 <div id="modalMetadata" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true" aria-labelledby="mdJudul">
-  <!-- Latar gelap (visual); klik area di luar panel ditangani #modalMetadataArea -->
+  
   <div id="modalMetadataLatar" class="md-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
   <div class="absolute inset-0 flex items-start justify-center overflow-y-auto p-4 md:items-center" id="modalMetadataArea">
@@ -154,7 +169,7 @@ $canPanel = is_admin() || is_viewer();
       <div class="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
         <div>
           <h3 id="mdJudul" class="text-lg font-extrabold tracking-tight text-slate-800">Metadata Kegiatan Statistik</h3>
-          <p class="mt-0.5 text-sm text-slate-500">Survei Harga Perdesaan (SHPED) · Badan Pusat Statistik Kabupaten Halmahera Utara</p>
+          <p class="mt-0.5 text-sm text-slate-500">Survei Harga Perdesaan (SHPED) · Badan Pusat Statistik (BPS)</p>
         </div>
         <button id="btnMetadataX" type="button"
                 class="grid h-9 w-9 flex-none place-items-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
@@ -180,7 +195,7 @@ $canPanel = is_admin() || is_viewer();
               </tr>
               <tr class="even:bg-slate-50/60">
                 <th scope="row" class="px-4 py-3 align-top font-bold text-slate-700">Penyelenggara</th>
-                <td class="px-4 py-3 align-top leading-relaxed text-slate-600">Badan Pusat Statistik (BPS) Kabupaten Halmahera Utara</td>
+                <td class="px-4 py-3 align-top leading-relaxed text-slate-600">Badan Pusat Statistik (BPS)</td>
               </tr>
               <tr class="even:bg-slate-50/60">
                 <th scope="row" class="px-4 py-3 align-top font-bold text-slate-700">Tujuan Kegiatan</th>
@@ -242,6 +257,64 @@ $canPanel = is_admin() || is_viewer();
           </table>
         </div>
 
+        <!-- UNDUH KUESIONER SHPED — tombol di bawah baris Diseminasi;
+             klik tombol → pilih kuesioner mana yang ingin diunduh (HD, HKD-1,
+             HKD-2.1, dan seterusnya). Daftar dibaca otomatis dari folder
+             docs/kuesioner oleh PHP di bagian atas file ini. -->
+        <div id="boxUnduhKues" class="mt-5 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="min-w-[240px] flex-1">
+              <p class="text-sm font-extrabold tracking-tight text-slate-800">
+                <i class="fa-solid fa-file-pdf mr-2 text-rose-500" aria-hidden="true"></i>Unduh Kuesioner SHPED (PDF)
+              </p>
+              <p class="mt-0.5 text-xs leading-relaxed text-slate-500">Instrumen pencacahan resmi — pilih kuesioner yang ingin diunduh: HD, HKD-1, HKD-2.1, dan seterusnya.</p>
+            </div>
+            <button id="btnUnduhKues" type="button"
+                    class="inline-flex flex-none items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white shadow transition hover:bg-violet-700"
+                    aria-expanded="false" aria-controls="panelUnduhKues">
+              Pilih Kuesioner
+              <i class="fa-solid fa-chevron-down text-[10px] transition-transform" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <?php if ($kuesionerPdf): ?>
+          <!-- Panel pilihan kuesioner (muncul saat tombol di atas diklik) -->
+          <div id="panelUnduhKues" class="mt-4 hidden space-y-4 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+            <?php
+            $_urutan = array_merge(array_keys($grupKuesMeta), ['*']);
+            foreach ($_urutan as $_g):
+                $_items = array_values(array_filter($kuesionerPdf,
+                    fn($k) => $_g === '*' ? !isset($grupKuesMeta[$k['grup']]) : $k['grup'] === $_g));
+                if (!$_items) continue;
+                $_meta = $grupKuesMeta[$_g] ?? ['judul' => 'Kuesioner lainnya', 'sub' => ''];
+            ?>
+            <div>
+              <p class="text-xs font-extrabold uppercase tracking-wide text-slate-500"><?= htmlspecialchars($_meta['judul']) ?></p>
+              <?php if ($_meta['sub']): ?><p class="text-[11px] text-slate-400"><?= htmlspecialchars($_meta['sub']) ?></p><?php endif; ?>
+              <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                <?php foreach ($_items as $k): ?>
+                <a href="<?= $k['href'] ?>" download
+                   class="group flex items-center gap-2.5 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-slate-200 transition hover:bg-violet-50 hover:ring-violet-300"
+                   title="Unduh <?= htmlspecialchars($k['kode'] . ($k['tahun'] ? ' (' . $k['tahun'] . ')' : '')) ?>">
+                  <i class="fa-solid fa-file-pdf text-base text-rose-500" aria-hidden="true"></i>
+                  <span class="min-w-0 flex-1">
+                    <span class="block truncate text-xs font-bold text-slate-700">Kuesioner <?= htmlspecialchars($k['kode']) ?></span>
+                    <?php if ($k['tahun']): ?><span class="block text-[10px] text-slate-400">Edisi <?= htmlspecialchars($k['tahun']) ?></span><?php endif; ?>
+                  </span>
+                  <i class="fa-solid fa-download text-[11px] text-violet-500 opacity-0 transition group-hover:opacity-100" aria-hidden="true"></i>
+                </a>
+                <?php endforeach; ?>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+          <?php else: ?>
+          <p class="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-700 ring-1 ring-amber-200">
+            Belum ada file kuesioner. Tempatkan file PDF di folder <b>docs/kuesioner/</b> (pola nama: Kuesioner_HD-1_2026.pdf).
+          </p>
+          <?php endif; ?>
+        </div>
+
         <!-- Deskripsi singkat kegiatan (sesuai dokumen metadata) -->
         <h4 class="mt-6 text-xs font-extrabold uppercase tracking-wide text-slate-400">Deskripsi Singkat Kegiatan</h4>
         <p class="mt-2 text-sm leading-relaxed text-slate-600">
@@ -257,7 +330,7 @@ $canPanel = is_admin() || is_viewer();
 
       <!-- Kaki modal -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-6 py-4">
-        <p class="text-xs text-slate-400">Sumber: Metadata Kegiatan Statistik Survei Harga Perdesaan (SHPED), BPS Kab. Halmahera Utara.</p>
+        <p class="text-xs text-slate-400">Sumber: Metadata Kegiatan Statistik Survei Harga Perdesaan (SHPED), BPS.</p>
         <button id="btnMetadataTutup" type="button"
                 class="rounded-xl bg-slate-900 px-5 py-2 text-xs font-semibold text-white transition hover:bg-slate-700">
           Tutup
@@ -284,8 +357,39 @@ $canPanel = is_admin() || is_viewer();
     document.getElementById('modalMetadataArea').addEventListener('click', function (ev) {
       if (ev.target === ev.currentTarget) tutup();
     });
+
+    /* Panel "Pilih Kuesioner" di dalam modal: klik tombol → muncul daftar
+       kuesioner (HD, HKD-1, HKD-2.1, …) → klik salah satu untuk mengunduh
+       PDF-nya. Panel ditutup dengan klik tombol lagi, klik di luar kotak,
+       atau Esc — Esc pertama hanya menutup panel, Esc kedua menutup modal. */
+    var btnKues   = document.getElementById('btnUnduhKues');
+    var panelKues = document.getElementById('panelUnduhKues');
+    var kuesTerbuka = function () {
+      return !!(btnKues && panelKues) && !panelKues.classList.contains('hidden');
+    };
+    var setKues = function (tampil) {
+      if (!btnKues || !panelKues) return;
+      panelKues.classList.toggle('hidden', !tampil);
+      btnKues.setAttribute('aria-expanded', tampil ? 'true' : 'false');
+      var panah = btnKues.querySelector('.fa-chevron-down');
+      if (panah) panah.style.transform = tampil ? 'rotate(180deg)' : '';
+    };
+    if (btnKues && panelKues) {
+      btnKues.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        setKues(!kuesTerbuka());
+      });
+      document.addEventListener('click', function (ev) {
+        if (kuesTerbuka() && !ev.target.closest('#boxUnduhKues')) setKues(false);
+      });
+    }
+
+    /* Esc: bila panel kuesioner terbuka → tutup panelnya saja;
+       selain itu → tutup modal metadata. */
     document.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Escape' && !modal.classList.contains('hidden')) tutup();
+      if (ev.key !== 'Escape' || modal.classList.contains('hidden')) return;
+      if (kuesTerbuka()) { setKues(false); return; }
+      tutup();
     });
   })();
 </script>

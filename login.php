@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="w-full max-w-md">
     <div class="rounded-2xl bg-white p-8 shadow-card">
       <div class="mb-6 text-center">
-        <img src="assets/img/logo.png" alt="Logo DataTidur Analyzer"
-             class="mx-auto mb-4 h-14 w-14">
+        <img src="assets/img/logo.png" alt="Logo BPS Kab Halut"
+             class="mx-auto mb-4 h-14 w-14 rounded-2xl object-cover">
         <h1 class="text-xl font-extrabold tracking-tight">Login Admin / Viewer</h1>
         <p class="mt-1 text-sm text-slate-500"><?= APP_NAME ?> — <?= APP_TAGLINE ?></p>
       </div>
@@ -100,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
       </form>
     </div>
-
   </div>
 </body>
 </html>

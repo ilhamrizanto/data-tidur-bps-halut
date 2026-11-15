@@ -1,21 +1,4 @@
 <?php
-/**
- * dashboard.php — Halaman utama ADMIN & VIEWER.
- *
- * Perubahan: bagian tabel harga bulanan, grid grafik PIHPS, peta harga, dan
- * kelengkapan data dipindah ke sini (dari halaman publik) sehingga semuanya
- * HANYA ditampilkan di dashboard admin.
- *
- * Role:
- *   - admin  : akses penuh — unggah data, analisis contoh, hapus unggahan.
- *   - viewer : HANYA MELIHAT — dapat melihat seluruh isi dashboard (statistik,
- *              riwayat, tabel, grafik, peta, kelengkapan) tetapi tidak dapat
- *              mengunggah, mengedit, ataupun menghapus file. Tombol-tombol
- *              aksi disembunyikan DAN endpoint server tetap menolak (401/403).
- *
- * Data dashboard dimuat via JS dari api/uploads.php (dashboard.js) dan
- * api/data.php?action=landing (landing.js — bagian data SHPED).
- */
 
 require_once __DIR__ . '/includes/auth.php';
 require_panel();                                   // admin ATAU viewer
@@ -90,6 +73,27 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 
+  <?php if ($isAdmin): ?>
+  <!-- Dua kartu aksi utama (HANYA admin — viewer tidak dapat mengunggah) -->
+  <div class="mb-8 grid gap-5 md:grid-cols-2">
+    <a href="upload.php"
+       class="card-hover group block rounded-2xl bg-white p-7 shadow-card ring-1 ring-slate-100">
+      <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-blue-50 text-xl text-primary-600"><i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i></div>
+      <h2 class="text-lg font-bold group-hover:text-primary-700">Upload Data Baru</h2>
+      <p class="mt-1 text-sm text-slate-500">Unggah file CSV atau Excel (.xlsx) berisi harga komoditas, pilih mapping kolom, lalu sistem menganalisis secara otomatis.</p>
+      <span class="mt-4 inline-block text-sm font-semibold text-primary-600">Buka halaman upload <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></span>
+    </a>
+
+    <button id="btnSample" type="button"
+            class="card-hover group block w-full rounded-2xl bg-white p-7 text-left shadow-card ring-1 ring-slate-100">
+      <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-amber-50 text-xl text-amber-600"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i></div>
+      <h2 class="text-lg font-bold group-hover:text-primary-700">Coba Data Contoh</h2>
+      <p class="mt-1 text-sm text-slate-500">Gunakan data contoh bawaan (contoh_harga.csv — 11 komoditas × 5 kecamatan Halmahera Utara × 3 bulan, Mei–Juli 2026) untuk mencoba analisis tanpa menyiapkan file sendiri.</p>
+      <span class="mt-4 inline-block text-sm font-semibold text-primary-600">Jalankan analisis contoh <i class="fa-solid fa-play text-xs" aria-hidden="true"></i></span>
+    </button>
+  </div>
+  <?php endif; ?>
+
   <!-- Riwayat unggahan (viewer dapat melihat; tombol hapus hanya untuk admin) -->
   <div class="overflow-hidden rounded-2xl bg-white shadow-card">
     <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
@@ -122,6 +126,19 @@ include __DIR__ . '/includes/header.php';
   <div id="toast" class="pointer-events-none fixed bottom-6 right-6 z-50 hidden w-80 rounded-2xl bg-slate-900 p-4 text-sm text-white shadow-2xl"></div>
   <?php endif; ?>
 
+  <!-- ===================== BAGIAN DATA (dipindah dari halaman publik) ===================== -->
+  <div class="mb-6 mt-10 border-t border-slate-200 pt-8">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-extrabold tracking-tight">Data &amp; Analisis SHPED</h2>
+        <p class="mt-1 text-sm text-slate-500">Tabel, grafik, peta, dan kelengkapan data — hanya ditampilkan di dashboard ini.</p>
+      </div>
+      <span id="statusChip" class="rounded-full bg-slate-100 px-3 py-1.5 text-xs text-slate-500">
+        <span class="skeleton inline-block h-3 w-56 rounded"></span>
+      </span>
+    </div>
+  </div>
+
   <!-- Keadaan kosong (belum ada data sama sekali) -->
   <div id="dashEmpty" class="mb-8 hidden rounded-2xl bg-white p-10 text-center shadow-card">
     <div class="text-5xl text-slate-300"><i class="fa-solid fa-database" aria-hidden="true"></i></div>
@@ -136,7 +153,7 @@ include __DIR__ . '/includes/header.php';
   </div>
 
   <?php $shped_tabel = true; include __DIR__ . '/includes/section_shped.php';       // dropdown kuesioner/komoditas/tahun/kecamatan + detail + grafik + TABEL bulanan ?>
-  <?php include __DIR__ . '/includes/section_grafik.php';        // grid grafik ala PIHPS (4×6, berhalaman) ?>
+  <?php include __DIR__ . '/includes/section_grafik.php';        // grid grafik ?>
   <?php include __DIR__ . '/includes/section_peta.php';          // peta harga Halmahera Utara + peringkat kecamatan ?>
   <?php include __DIR__ . '/includes/section_kelengkapan.php';   // kelengkapan data + unduh CSV/Excel ?>
 </main>

@@ -2,8 +2,7 @@
    dashboard.js — Logika dashboard admin
    1. Muat statistik + riwayat unggahan (api/uploads.php)
    2. Cek status layanan FastAPI (api/health.php)
-   3. Tombol "Coba Data Contoh" (api/sample.php) — hanya admin
-   4. Hapus unggahan — hanya admin
+   3. Hapus unggahan — hanya admin
    Role viewer (hanya melihat): BOLEH_KELOLA=false dari dashboard.php —
    tombol hapus disembunyikan; penolakan utama tetap di server.
    ===================================================================== */

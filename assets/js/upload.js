@@ -1,12 +1,3 @@
-/* =====================================================================
-   upload.js — Logika halaman "Upload & Konfigurasi" (admin)
-   Alur: pilih/drag file → POST api/upload_file.php (dapat kolom + preview
-   + tebakan peran) → mapping peran kolom (FORMAT LEBAR: kolom = bulan)
-   → POST api/analyze.php → tampilkan hasil.
-   Catatan: opsi "Format Baris" sudah dihapus — halaman ini selalu memakai
-   format lebar (setiap kolom bulan berisi harga satu bulan).
-   ===================================================================== */
-
 const CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';
 const MB = 1024 * 1024;
 
@@ -25,12 +16,6 @@ function showAlert(msg) {
 }
 function hideAlert() { el('alertBox').classList.add('hidden'); }
 
-/* Baca respons fetch dengan aman.
- * Masalah lama: bila server menjawab 204/5xx berupa HTML/Respons kosong,
- * res.json() meledak dengan pesan samar ("Unexpected end of JSON input")
- * sehingga pengguna hanya melihat kode seperti "204 No Content" tanpa tahu
- * apa yang harus dilakukan. Sekarang status HTTP + cuplikan isi respons
- * selalu ikut ditampilkan, beserta petunjuk penyebab yang paling mungkin. */
 async function bacaJson(res) {
   const teks = await res.text();
   const status = res.status + (res.statusText ? ' ' + res.statusText : '');
@@ -71,11 +56,13 @@ function fmtSize(bytes) {
     if (j.api !== 'online') throw new Error('offline');
     box.className = 'mb-6 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700';
     box.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>'
-      + '<span><b>Layanan analisis aktif</b> — file dapat diunggah.</span>';
+      + '<span><b>Layanan analisis aktif</b> di ' + esc(j.url) + ' — file dapat diunggah.</span>';
   } catch (_) {
     box.className = 'mb-6 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800';
     box.innerHTML = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>'
-      + '<span><b>Layanan analisis Python tidak aktif.</b></span>';
+      + '<span><b>Layanan analisis Python tidak aktif.</b> Klik dua kali <code class="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs">jalankan_api.bat</code> '
+      + 'di folder proyek, tunggu jendela hitam terbuka tanpa error, lalu muat ulang halaman ini (Ctrl+F5). '
+      + 'Tanpa layanan ini, unggahan file akan selalu gagal.</span>';
   }
 })();
 
@@ -152,13 +139,10 @@ function isiSelect(selectId, columns, terpilih, kosongBoleh, labelKosong) {
   html += columns.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
   s.innerHTML = html;
   if (terpilih && columns.includes(terpilih)) {
-    s.value = terpilih;                       // tebakan yakin → pakai tebakan
+    s.value = terpilih;
   } else if (kosongBoleh) {
     s.value = '';
   } else {
-    // WAJIB tapi tebakan tidak yakin → kosongkan (wajib dipilih manual).
-    // Jangan pernah diam-diam memakai kolom pertama — itu penyebab hasil
-    // analisis salah/kosong pada file SHPED asli.
     s.insertAdjacentHTML('afterbegin',
       '<option value="" disabled selected>— pilih kolom —</option>');
     s.value = '';

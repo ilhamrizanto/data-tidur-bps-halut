@@ -29,7 +29,6 @@ $canPanel   = $isAdmin || $isViewer; // boleh membuka dashboard admin
   <script>
     tailwind.config = { theme: { extend: {
       fontFamily: {
-        // Font situs: DM Sans (keseluruhan halaman) — tanpa fallback Inter/Kantumruy
         sans: ['"DM Sans"', 'Segoe UI', 'system-ui', 'sans-serif'],
         hero: ['"DM Sans"', 'Segoe UI', 'system-ui', 'sans-serif'],
       },
@@ -40,7 +39,6 @@ $canPanel   = $isAdmin || $isViewer; // boleh membuka dashboard admin
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- DM Sans — font utama seluruh situs (mendukung bobot 100–1000) -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css?v=<?= is_file(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : '1' ?>">
 </head>
@@ -71,6 +69,15 @@ $canPanel   = $isAdmin || $isViewer; // boleh membuka dashboard admin
       <div class="hidden items-center gap-1 text-sm font-medium md:flex">
         <a href="#ringkasan" class="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100">Ringkasan</a>
         <a href="#shped"     class="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100">Informasi SHPED</a>
+        <!-- Tentang Kami: halaman profil (ketua/anggota tim distribusi, mentor,
+             tim pengembang) — dibuka di TAB BARU -->
+        <a href="tentang-kami.php" rel="noopener"
+           class="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100">Tentang Kami</a>
+        <!-- Buku Panduan: unduh PDF panduan aplikasi -->
+        <a href="docs/Buku_Panduan_Deteksi_Data_Tidur.pdf" download
+           class="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100" title="Unduh buku panduan (PDF)">
+          <i class="fa-solid fa-book-open mr-1.5 text-xs" aria-hidden="true"></i>Buku Panduan
+        </a>
         <!-- Tabel, grafik, peta, dan kelengkapan data kini hanya di dashboard admin -->
         <a href="<?= $canPanel ? 'dashboard.php' : 'login.php' ?>"
            class="ml-2 rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-700">
@@ -91,6 +98,10 @@ $canPanel   = $isAdmin || $isViewer; // boleh membuka dashboard admin
     <?php else: ?>
       <a href="#ringkasan" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">Ringkasan</a>
       <a href="#shped"     class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">Informasi SHPED</a>
+      <a href="tentang-kami.php" target="_blank" rel="noopener" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">Tentang Kami <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]" aria-hidden="true"></i></a>
+      <a href="docs/Buku_Panduan_Deteksi_Data_Tidur.pdf" download
+         class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">
+        <i class="fa-solid fa-book-open mr-1.5 text-xs" aria-hidden="true"></i>Buku Panduan <span class="text-xs text-slate-400">(PDF)</span></a>
       <a href="<?= $canPanel ? 'dashboard.php' : 'login.php' ?>" class="mt-2 block rounded-xl bg-slate-900 px-4 py-2 text-center text-sm font-medium text-white">
         <i class="fa-solid <?= $canPanel ? 'fa-gauge-high' : 'fa-user-shield' ?> mr-1.5 text-xs" aria-hidden="true"></i><?= $canPanel ? 'Dashboard Admin' : 'Login Admin' ?></a>
     <?php endif; ?>
