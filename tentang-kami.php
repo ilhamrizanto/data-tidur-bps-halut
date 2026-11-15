@@ -188,71 +188,67 @@ $tahunKini  = date('Y');
   <section id="pengembang" class="mx-auto mt-28 max-w-7xl scroll-mt-24 px-4 pb-20 md:px-8 md:pb-24">
     <p class="text-xs font-extrabold uppercase tracking-[0.2em] text-primary-600">Tim Pengembang</p>
     <h2 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">Pengembang Website</h2>
-    <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
-      Empat pengembang dengan keahlian di bidangnya masing-masing membangun
-      Sistem Deteksi Data Tidur dari halaman publik, dashboard admin, hingga layanan analisis.
-    </p>
-
     <div class="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-      
-  <!-- CARD 1 -->
-  <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
-    <div class="w-full">
-      <img src="assets/img/ndes.png" class="w-full h-72 object-cover object-top" alt="Lukas Fernandes Urupoda">
-    </div>
-    <div class="p-7 flex-1">
-      <p class="text-lg font-extrabold tracking-tight text-slate-900">Lukas Fernandes Urupoda</p>
-      <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-        <a href="https://www.instagram.com/andesurpda/" target="_blank" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> andesurpda</a>
-        <a href="mailto:nandes.urpda@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> nandes.urpda@gmail.com</a>
+        
+      <!-- CARD 1 -->
+      <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
+        <div class="w-full">
+          <img src="assets/img/ndes.png" class="w-full h-72 object-cover object-top" alt="Lukas Fernandes Urupoda">
+        </div>
+        <div class="p-7 flex-1">
+          <p class="text-lg font-extrabold tracking-tight text-slate-900">Lukas Fernandes Urupoda</p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="https://www.instagram.com/andesurpda/" target="_blank" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> andesurpda</a>
+            <a href="mailto:nandes.urpda@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> nandes.urpda@gmail.com</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- CARD 2 -->
-  <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
-    <div class="w-full">
-      <img src="assets/img/pengembang3.jpeg" class="w-full h-72 object-cover object-top" alt="Felin Febriani Toronge">
-    </div>
-    
-    <div class="p-7 flex-1">
-      <p class="text-lg font-extrabold tracking-tight text-slate-900">Felin Febriani Toronge</p>
-      <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-        <a href="https://www.instagram.com/felintoronge?rpxt=azZmMjQ4emR1bWM3&utm_source=qr" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> felintoronge</a>
-        <a href="mailto:felintoronge2004@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> felintoronge2004@gmail.com</a>
+      <!-- CARD 2 -->
+      <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
+        <div class="w-full">
+          <img src="assets/img/pengembang3.jpeg" class="w-full h-72 object-cover object-top" alt="Felin Febriani Toronge">
+        </div>
+        
+        <div class="p-7 flex-1">
+          <p class="text-lg font-extrabold tracking-tight text-slate-900">Felin Febriani Toronge</p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="https://www.instagram.com/felintoronge?rpxt=azZmMjQ4emR1bWM3&utm_source=qr" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> felintoronge</a>
+            <a href="mailto:felintoronge2004@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> felintoronge2004@gmail.com</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- CARD 3 -->
-  <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
-    <div class="w-full">
-      <img src="assets/img/tim-pengembang2.jpeg" class="w-full h-72 object-cover object-top" alt="Galan Kihi-Kihi">
-    </div>
-    
-    <div class="p-7 flex-1">
-      <p class="text-lg font-extrabold tracking-tight text-slate-900">Galan Kihi-Kihi</p>
-      <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-        <a href="https://www.instagram.com/galanddpo_/" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> galanddpo_</a>
-        <a href="mailto:gkihikihi@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> gkihikihi@gmail.com</a>
+      <!-- CARD 3 -->
+      <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
+        <div class="w-full">
+          <img src="assets/img/tim-pengembang2.jpeg" class="w-full h-72 object-cover object-top" alt="Galan Kihi-Kihi">
+        </div>
+        
+        <div class="p-7 flex-1">
+          <p class="text-lg font-extrabold tracking-tight text-slate-900">Galan Kihi-Kihi</p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="https://www.instagram.com/galanddpo_/" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> galanddpo_</a>
+            <a href="mailto:gkihikihi@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> gkihikihi@gmail.com</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- CARD 4 -->
-  <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
-    <div class="w-full">
-      <img src="assets/img/yayaya.jpeg" class="w-full h-72 object-cover object-top" alt="Iqnatia Freyling Pesik">
-    </div>
-    
-    <div class="p-7 flex-1">
-      <p class="text-lg font-extrabold tracking-tight text-slate-900">Iqnatia Freyling Pesik</p>
-      <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-        <a href="https://www.instagram.com/iqnatiaa" target="_blank" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> iqnatiaa</a>
-        <a href="mailto:iqnatiafreyling@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> iqnatiafreyling@gmail.com</a>
+      <!-- CARD 4 -->
+      <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
+        <div class="w-full">
+          <img src="assets/img/yayaya.jpeg" class="w-full h-72 object-cover object-top" alt="Iqnatia Freyling Pesik">
+        </div>
+        
+        <div class="p-7 flex-1">
+          <p class="text-lg font-extrabold tracking-tight text-slate-900">Iqnatia Freyling Pesik</p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="https://www.instagram.com/iqnatiaa" target="_blank" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> iqnatiaa</a>
+            <a href="mailto:iqnatiafreyling@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> iqnatiafreyling@gmail.com</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
   </section>
 
 </main>
