@@ -250,7 +250,7 @@ $tahunKini  = date('Y');
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Iqnatia Freyling Pesik</p>
           <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
             <a href="#"><i class="fa-brands fa-instagram"></i> iqnatiaa</a>
-            <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> @gmail.com</a>
+            <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> iqnatiafreyling@gmail.com</a>
           </div>
         </div>
       </div>
