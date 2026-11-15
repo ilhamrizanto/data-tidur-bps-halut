@@ -176,7 +176,7 @@ $tahunKini  = date('Y');
         <p class="mt-4 text-xl font-extrabold tracking-tight text-slate-900">Frida Oktafiana Arianti</p>
         <p class="text-sm font-bold text-violet-600">Mentor</p>
         <p class="mt-3 text-sm leading-relaxed text-slate-500">
-          Membimbing tim dari sisi metodologi statistik dan pengembangan aplikasi —
+          Membimbing tim dari sisi metodologi statistik dan pengembangan web serta
           memberikan arahan kebijakan data serta meninjau hasil deteksi data tidur
           sebelum digunakan.
         </p>
