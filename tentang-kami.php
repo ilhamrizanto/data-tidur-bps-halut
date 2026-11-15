@@ -107,8 +107,8 @@ $tahunKini  = date('Y');
 
       <!-- Kiri: kartu profil (pengganti foto) + sapaan besar di bawahnya -->
       <div>
-        <div class="relative aspect-[4/5] w-full max-w-sm overflow-hidden">
-          <img src="assets/img/ketua-distribusi.jpeg" alt="FOTO-KETUA-TIM-DISTRIBUSI">
+        <div class="relative aspect-[4/5] w-full rounded-2xl max-w-sm overflow-hidden">
+          <img src="assets/img/ros.jpeg" alt="FOTO-KETUA-TIM-DISTRIBUSI">
         </div>
         <h1 class="max-w-sm text-center mt-8 text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl">
           <span class="whitespace-nowrap">Rosani Hasanela</span>
