@@ -73,27 +73,6 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 
-  <?php if ($isAdmin): ?>
-  <!-- Dua kartu aksi utama (HANYA admin — viewer tidak dapat mengunggah) -->
-  <div class="mb-8 grid gap-5 md:grid-cols-2">
-    <a href="upload.php"
-       class="card-hover group block rounded-2xl bg-white p-7 shadow-card ring-1 ring-slate-100">
-      <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-blue-50 text-xl text-primary-600"><i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i></div>
-      <h2 class="text-lg font-bold group-hover:text-primary-700">Upload Data Baru</h2>
-      <p class="mt-1 text-sm text-slate-500">Unggah file CSV atau Excel (.xlsx) berisi harga komoditas, pilih mapping kolom, lalu sistem menganalisis secara otomatis.</p>
-      <span class="mt-4 inline-block text-sm font-semibold text-primary-600">Buka halaman upload <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></span>
-    </a>
-
-    <button id="btnSample" type="button"
-            class="card-hover group block w-full rounded-2xl bg-white p-7 text-left shadow-card ring-1 ring-slate-100">
-      <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-amber-50 text-xl text-amber-600"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i></div>
-      <h2 class="text-lg font-bold group-hover:text-primary-700">Coba Data Contoh</h2>
-      <p class="mt-1 text-sm text-slate-500">Gunakan data contoh bawaan (contoh_harga.csv — 11 komoditas × 5 kecamatan Halmahera Utara × 3 bulan, Mei–Juli 2026) untuk mencoba analisis tanpa menyiapkan file sendiri.</p>
-      <span class="mt-4 inline-block text-sm font-semibold text-primary-600">Jalankan analisis contoh <i class="fa-solid fa-play text-xs" aria-hidden="true"></i></span>
-    </button>
-  </div>
-  <?php endif; ?>
-
   <!-- Riwayat unggahan (viewer dapat melihat; tombol hapus hanya untuk admin) -->
   <div class="overflow-hidden rounded-2xl bg-white shadow-card">
     <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
