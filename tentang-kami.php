@@ -135,10 +135,10 @@ $tahunKini  = date('Y');
     <!-- <p class="text-xs text-center font-extrabold uppercase tracking-[0.2em] text-emerald-600">Tim Distribusi</p> -->
     <h2 class="mt-2 text-center text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">Anggota Tim Distribusi</h2>
 
-    <div class="mt-7 grid lg:grid-cols-3">
+    <div class="mt-14 grid lg:grid-cols-3">
       <!-- Profil Anggota Tim -->
       <div class="flex text-center flex-col items-center gap-5 p-7">
-        <img src="assets/img/pengembang3.jpeg" class="w-32 h-32 rounded-full object-cover" alt="">
+        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
         <div class="min-w-0">
           <p class="text-xl font-extrabold tracking-tight text-slate-900">Muhammad Afwan</p>
           <!-- <p class="text-sm font-bold text-emerald-600">Anggota Tim Distribusi</p> -->
@@ -151,14 +151,14 @@ $tahunKini  = date('Y');
       </div>
 
       <div class="flex text-center flex-col items-center gap-5 p-7">
-        <img src="assets/img/pengembang3.jpeg" class="w-32 h-32 rounded-full object-cover" alt="">
+        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
         <div class="min-w-0">
           <p class="text-xl font-extrabold tracking-tight text-slate-900">Alifa Anindya</p>
         </div>
       </div>
 
       <div class="flex text-center flex-col items-center gap-5 p-7">
-        <img src="assets/img/pengembang3.jpeg" class="w-32 h-32 rounded-full object-cover" alt="">
+        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
         <div class="min-w-0">
           <p class="text-xl font-extrabold tracking-tight text-slate-900">Meylin Man Hasan</p>
         </div>
@@ -172,7 +172,7 @@ $tahunKini  = date('Y');
 
     <div class="mt-7 flex flex-col items-center text-center gap-5 rounded-xl bg-white p-7 shadow-card ring-1 ring-slate-100 lg:max-w-3xl">
       <div class="min-w-0 flex flex-col items-center">
-        <img src="assets/img/pengembang3.jpeg" class="w-32 h-32 rounded-full object-cover" alt="Foto Frida">
+        <img src="assets/img/profil-icon.jpg" class="w-32 h-32 rounded-full object-cover" alt="">
         <p class="mt-4 text-xl font-extrabold tracking-tight text-slate-900">Frida Oktafiana Arianti</p>
         <p class="text-sm font-bold text-violet-600">Mentor</p>
         <p class="mt-3 text-sm leading-relaxed text-slate-500">
@@ -203,27 +203,25 @@ $tahunKini  = date('Y');
         
         <div class="p-7 flex-1">
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Lukas Fernandes Urupoda</p>
-          <p class="text-sm font-bold text-primary-600">Frontend Developer</p>
-          <p class="mt-3 text-sm leading-relaxed text-slate-500">
-            Membangun antarmuka halaman publik dan dashboard dengan Tailwind CSS,
-            Apache ECharts, dan Leaflet agar responsif serta mudah dibaca.
-          </p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="#"><i class="fa-brands fa-instagram"></i> andesurpda</a>
+            <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> nandes.urpda@gmail.com</a>
+          </div>
         </div>
       </div>
 
       <!-- CARD 2 -->
       <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
         <div class="w-full">
-          <img src="assets/img/pengembang3.jpeg" class="w-full h-auto object-cover" alt="tim-pengembang-web">
+          <img src="assets/img/pengembang3.jpeg" class="w-full h- object-cover" alt="tim-pengembang-web">
         </div>
         
         <div class="p-7 flex-1">
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Felin Febriani Toronge</p>
-          <p class="text-sm font-bold text-primary-600">Backend Developer (PHP)</p>
-          <p class="mt-3 text-sm leading-relaxed text-slate-500">
-            Menangani login &amp; hak akses admin/viewer, unggah file, API data, serta
-            keamanan (hash password, CSRF) pada PHP dan MySQL.
-          </p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href=""><i class="fa-brands fa-instagram"></i> felintoronge</a>
+            <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> felintoronge2004@gmail.com</a>
+          </div>
         </div>
       </div>
 
@@ -235,11 +233,10 @@ $tahunKini  = date('Y');
         
         <div class="p-7 flex-1">
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Galan Kihi-Kihi</p>
-          <p class="text-sm font-bold text-primary-600">Data Engineer (Python)</p>
-          <p class="mt-3 text-sm leading-relaxed text-slate-500">
-            Menulis layanan analisis FastAPI + Pandas: membaca Excel/CSV SHPED,
-            agregasi bulanan, deteksi data tidur, dan ekspor Excel.
-          </p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="#"><i class="fa-brands fa-instagram"></i> galanddpo_</a>
+            <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> gkihikihi@gmail.com</a>
+          </div>
         </div>
       </div>
 
@@ -251,11 +248,10 @@ $tahunKini  = date('Y');
         
         <div class="p-7 flex-1">
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Iqnatia Freyling Pesik</p>
-          <p class="text-sm font-bold text-primary-600">UI/UX Designer &amp; QA</p>
-          <p class="mt-3 text-sm leading-relaxed text-slate-500">
-            Menulis layanan analisis FastAPI + Pandas: membaca Excel/CSV SHPED,
-            agregasi bulanan, deteksi data tidur, dan ekspor Excel.
-          </p>
+          <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
+            <a href="#"><i class="fa-brands fa-instagram"></i> iqnatiaa</a>
+            <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> @gmail.com</a>
+          </div>
         </div>
       </div>
     </div>
