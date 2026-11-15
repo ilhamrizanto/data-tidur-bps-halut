@@ -218,7 +218,7 @@ $tahunKini  = date('Y');
     <div class="p-7 flex-1">
       <p class="text-lg font-extrabold tracking-tight text-slate-900">Felin Febriani Toronge</p>
       <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-        <a href="#" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> felintoronge</a>
+        <a href="https://www.instagram.com/felintoronge?rpxt=azZmMjQ4emR1bWM3&utm_source=qr" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> felintoronge</a>
         <a href="mailto:felintoronge2004@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> felintoronge2004@gmail.com</a>
       </div>
     </div>
@@ -233,7 +233,7 @@ $tahunKini  = date('Y');
     <div class="p-7 flex-1">
       <p class="text-lg font-extrabold tracking-tight text-slate-900">Galan Kihi-Kihi</p>
       <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-        <a href="#" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> galanddpo_</a>
+        <a href="https://www.instagram.com/galanddpo_/" class="hover:text-primary-600 transition-colors"><i class="fa-brands fa-instagram"></i> galanddpo_</a>
         <a href="mailto:gkihikihi@gmail.com" class="hover:text-primary-600 transition-colors"><i class="fa-regular fa-envelope"></i> gkihikihi@gmail.com</a>
       </div>
     </div>
