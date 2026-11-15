@@ -198,13 +198,13 @@ $tahunKini  = date('Y');
       <!-- CARD 1 -->
       <div class="rounded-3xl bg-white shadow-card ring-1 ring-slate-100 overflow-hidden flex flex-col">
         <div class="w-full">
-          <img src="assets/img/tim-pengembang2.jpeg" class="w-full h-auto object-cover" alt="tim-pengembang-web">
+          <img src="assets/img/ndes.png" class="w-full h-auto object-cover" alt="tim-pengembang-web">
         </div>
         
         <div class="p-7 flex-1">
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Lukas Fernandes Urupoda</p>
           <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-            <a href="#"><i class="fa-brands fa-instagram"></i> andesurpda</a>
+            <a href="https://www.instagram.com/andesurpda/" target="_blank"><i class="fa-brands fa-instagram"></i> andesurpda</a>
             <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> nandes.urpda@gmail.com</a>
           </div>
         </div>
@@ -249,7 +249,7 @@ $tahunKini  = date('Y');
         <div class="p-7 flex-1">
           <p class="text-lg font-extrabold tracking-tight text-slate-900">Iqnatia Freyling Pesik</p>
           <div class="icon-sosmed flex flex-col mt-10 gap-2 text-sm">
-            <a href="#"><i class="fa-brands fa-instagram"></i> iqnatiaa</a>
+            <a href="https://www.instagram.com/iqnatiaa?dlrf=NWNlcGJzMzZzdGo2" target="_blank"><i class="fa-brands fa-instagram"></i> iqnatiaa</a>
             <a href="nandes.urpda@gmail.com"><i class="fa-regular fa-envelope"></i> iqnatiafreyling@gmail.com</a>
           </div>
         </div>
