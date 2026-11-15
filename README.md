@@ -1,6 +1,6 @@
 # Deteksi Data Tidur — Informasi Data SHPED Halmahera Utara
 
-Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konstan (tidak berubah) selama tiga bulan atau lebih** — dari file **Excel/CSV** yang diunggah admin, lalu menampilkannya dengan tampilan bergaya **PIHPS Nasional**: kartu ringkasan, *Informasi Data SHPED* dengan dropdown filter **Kuesioner → Komoditas → Tahun → Kecamatan** di **halaman publik**, sedangkan **tabel harga bulanan, galeri grafik 1 komoditas = 1 grafik (4 kolom × 6 baris per halaman), peta harga Kabupaten Halmahera Utara, dan tabel kelengkapan data** kini **hanya ditampilkan di dashboard admin** (dapat dilihat admin maupun viewer).
+Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konstan (tidak berubah) selama tiga bulan atau lebih** — dari file **Excel/CSV** yang diunggah admin, lalu menampilkannya dengan tampilan bergaya **PIHPS Nasional**: kartu ringkasan, *Informasi Data SHPED* dengan dropdown filter **Jenis Dokumen → Komoditas → Tahun → Kecamatan** di **halaman publik**, sedangkan **tabel harga bulanan, galeri grafik 1 komoditas = 1 grafik (4 kolom × 6 baris per halaman), peta harga Kabupaten Halmahera Utara, dan tabel kelengkapan data** kini **hanya ditampilkan di dashboard admin** (dapat dilihat admin maupun viewer).
 
 > **Data tidur** = harga yang konstan **minimal 3 bulan berturut-turut** (konstan hanya 2 bulan **tidak** dihitung). Contoh: harga **beras, gula, dan garam tetap Rp 30.000/kg dari Mei sampai Juli** → sistem menghitungnya sebagai **3 data tidur**.
 
@@ -12,11 +12,14 @@ Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konsta
 |---|---|
 | **User (publik)** | **Hero hijau** berfont **DM Sans** (font seluruh situs) + foto **Pasar Modern Tobelo** |
 | | **3 kartu ringkasan** (klik): **Total Komoditas** (persis jumlah komoditas di file Excel), **Komoditas Data Tidur**, dan **Kelengkapan Data** — untuk admin/viewer menuju ke bagian terkait di dashboard |
-| | **Informasi Data SHPED** — **4 tombol dropdown berurutan kiri→kanan**: **KUESIONER** (kode dari kolom *Kuesioner* file SHPED — HKD-1, HKD-2.1, … — memfilter daftar komoditas pada card/grid agar **hanya menyesuaikan kuesioner terpilih**), **Komoditas** (dengan **daftar kualitas di bawah nama komoditas**), **Tahun**, dan **Kecamatan** (**default: Tobelo**) → menampilkan detail harga bulanan + grafik tren. **Dropdown Tahun otomatis berisi tahun dari SEMUA file yang diunggah** — unggah data 2025 lalu 2026 → pilihan **2025 dan 2026 langsung muncul** (lengkap dengan jumlah komoditas & periode per tahun); memilih tahun milik unggahan lain memuat ulang data otomatis |
+| | **Informasi Data SHPED** — **4 tombol dropdown berurutan kiri→kanan**: **JENIS DOKUMEN** (kode dari kolom *Kuesioner* file SHPED — HKD-1, HKD-2.1, … — memfilter daftar komoditas pada card/grid agar **hanya menyesuaikan jenis dokumen terpilih**), **Komoditas** (dengan **daftar kualitas di bawah nama komoditas**), **Tahun**, dan **Kecamatan** (**default: SEMUA KECAMATAN** — rata-rata antar kecamatan) → menampilkan detail harga bulanan + grafik tren. **Dropdown Tahun otomatis berisi tahun dari SEMUA file yang diunggah** — unggah data 2025 lalu 2026 → pilihan **2025 dan 2026 langsung muncul** (lengkap dengan jumlah komoditas & periode per tahun); memilih tahun milik unggahan lain memuat ulang data otomatis |
+| | **Modal Metadata SHPED + Unduh Kuesioner**: kartu metadata membuka pop-up 16 komponen; di **bawah baris Diseminasi** ada tombol **Unduh Kuesioner SHPED (PDF)** → klik → **pilih kuesioner mana yang diunduh** (HD-1…HD-6, HKD-1, HKD-2.1, HKD-2.2 — daftar otomatis dari `app/docs/kuesioner/`) |
+| | **Tentang Kami — halaman tersendiri (`tentang-kami.php`, dibuka di TAB BARU saat menu diklik)** dengan desain ala halaman portofolio: navigasi minimalis dengan **jam langsung WIT** di kanan atas, **kartu profil hero** ("Halo! Saya Ros") + judul jabatan besar, tombol aksi gelap/terang, dan **ikon mengambang di sisi kanan layar**; isinya profil **Tim Distribusi** (ketua **Ros**, anggota **Avhan**), **mentor Frida**, dan **4 tim pengembang** beserta keahlian masing-masing |
+| | **Buku Panduan** di menu navigasi (samping kanan menu Tentang Kami) mengunduh PDF panduan (`docs/Buku_Panduan_Deteksi_Data_Tidur.pdf`) — tombol **"Unduh Buku Panduan"** juga ada di nav & ikon mengambang halaman Tentang Kami |
 | **Dashboard admin** | **Seluruh bagian data dipindah ke sini** (tidak lagi di halaman publik): **tabel harga bulanan** komoditas terpilih, **grid grafik ala PIHPS Nasional** (4 kolom × 6 baris per halaman, klik kartu = buka detail), **peta harga** Leaflet per kecamatan (hijau terendah → merah tertinggi + legenda + peringkat), dan **Kelengkapan Data** (tab *Semua / Data Tidur / Harga Bergerak*, pencarian, halaman, **Unduh CSV/Excel**) |
 | **Role** | **Login admin & viewer** (bcrypt + CSRF + session hardening): **admin** = akses penuh (unggah, analisis, hapus); **viewer** = **hanya dapat melihat** semua tampilan (halaman depan + dashboard admin), **tidak dapat mengunggah, mengedit, ataupun menghapus** — tombol disembunyikan dan endpoint server menolak (401/403) |
 | **Admin** | Dashboard: **Periode Data** (diambil dari **tanggal-bulan-tahun file Excel**), jumlah **Komoditas** sesuai file, **Data Tidur**, total unggahan, status layanan, riwayat unggahan |
-| | Upload **drag & drop** + preview + **mapping peran kolom** (komoditas, kualitas, kecamatan, satuan, **kuesioner**) dengan **tebakan otomatis** |
+| | Upload **drag & drop** + preview + **mapping peran kolom** (komoditas, kualitas, kecamatan, satuan, **kuesioner**) dengan **tebakan otomatis** — pada file SHPED tebakan **Kolom Kualitas memilih "Nama Kualitas"** (bukan "Kode Kualitas") |
 | | Format **lebar** (kolom = bulan Mei/Juni/Juli …): centang kolom bulan + isi tahun. Opsi format baris telah dihapus dari UI |
 | | Analisis otomatis saat upload → langsung tampil di halaman publik & dashboard |
 
@@ -31,7 +34,7 @@ Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konsta
 ## Konsep Analisis
 
 - **Komoditas** = pasangan unik **(nama + kualitas)**, mis. "Beras — Premium" dan "Beras — Medium" dihitung 2 komoditas. **Jumlah komoditas yang tampil = persis jumlah baris unik di file Excel** (Excel 600 komoditas → kartu & dashboard menampilkan 600).
-- **Kuesioner** = kode kuesioner pada kolom *Kuesioner* file SHPED (mis. **HKD-1, HKD-2.1**) — tersimpan per seri di tabel `analisis_seri` dan menjadi **dropdown filter paling kiri** di Informasi Data SHPED. Memilih kuesioner menyaring daftar komoditas pada dropdown, panel detail, dan **card/grid grafik** agar hanya komoditas milik kuesioner itu yang tampil (grid tidak lagi terlalu banyak).
+- **Kuesioner (Jenis Dokumen)** = kode kuesioner pada kolom *Kuesioner* file SHPED (mis. **HKD-1, HKD-2.1**) — tersimpan per seri di tabel `analisis_seri` dan menjadi **dropdown filter paling kiri** (label **"Jenis Dokumen"**) di Informasi Data SHPED. Memilih jenis dokumen menyaring daftar komoditas pada dropdown, panel detail, dan **card/grid grafik** agar hanya komoditas milik kuesioner itu yang tampil (grid tidak lagi terlalu banyak).
 - **Seri** = komoditas × kualitas × **kecamatan** (unit wilayah untuk peta & tabel).
 - **Harga dianalisis per BULAN** (rata-rata bila satu bulan berisi banyak tanggal).
 - **Data tidur** = harga semua bulan **sama (konstan)** dan data **≥ 3 bulan** (`min_bulan_tidur` di `DEFAULT_CFG`). **Konstan hanya 2 bulan TIDAK dihitung data tidur** — alasannya tampil otomatis, mis. *"Harga konstan Rp 18.000/kg selama 2 bulan (November–Desember 2025) — konstan kurang dari 3 bulan, tidak dihitung data tidur"*. Bila memenuhi syarat: *"Harga konstan Rp 30.000/kg selama 3 bulan (Mei–Juli 2026)"*.
@@ -39,7 +42,7 @@ Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konsta
 - **Kelengkapan data** = seluruh komoditas: jumlah **data tidur** + jumlah **harga bergerak**; detail lengkapnya ada di tabel kelengkapan (dapat diunduh).
 - Bila file **tidak punya kolom kualitas/kecamatan/satuan**, dipakai default **"Standar" / "Tobelo" / "/kg"**.
 - Kolom waktu fleksibel: `2026-05-01`, `01/05/2026`, **nama bulan** (`Mei`, `Mei 2026`), dan pada format lebar header kolom langsung jadi bulan.
-- **Tebakan kolom bulan mengabaikan kolom berakhiran `Prev`** (ekspor SHPED: "Januari Prev" = harga bulan sebelumnya) agar harga tiap bulan tidak tercampur; kolom tetap bisa dipilih manual bila diperlukan.
+- **Tebakan kolom bulan mengabaikan kolom berakhiran `Prev`** (ekspor SHPED: "Januari Prev" = harga bulan sebelumnya) agar harga tiap bulan tidak tercampur; kolom tetap bisa dipilih manual bila diperlukan. Tebakan **Kolom Kualitas memprioritaskan "Nama Kualitas"** di atas "Kode Kualitas"/"Status Kualitas".
 - **BOM UTF-8 pada header CSV dibuang otomatis** (file ekspor sering berawalan BOM) sehingga kolom **`Tahun`** tetap dikenali dan tahun default mengikuti isi file (bukan tahun berjalan).
 
 ---
@@ -103,7 +106,14 @@ deteksi-data-tidur/
 │   │   ├── uploads.php           ← GET statistik+riwayat / POST hapus
 │   │   └── health.php            ← cek status layanan Python
 │   ├── index.php                 ← HALAMAN PUBLIK (hero, ringkasan, SHPED,
-│   │                                modal metadata SHPED — tanpa banner dashboard)
+│   │                                modal metadata + unduh kuesioner PDF —
+│   │                                tanpa banner dashboard)
+│   ├── tentang-kami.php          ← HALAMAN TENTANG KAMI (tab baru, desain
+│   │                                portofolio: jam WIT, hero profil Ros,
+│   │                                Avhan · Frida · 4 tim pengembang)
+│   ├── docs/                     ← Buku_Panduan_Deteksi_Data_Tidur.pdf
+│   │   └── kuesioner/*.pdf       ← kuesioner SHPED (HD/HKD) untuk tombol
+│   │                                "Unduh Kuesioner" di modal metadata
 │   ├── dashboard.php             ← ADMIN+VIEWER (tabel, grafik, peta, kelengkapan)
 │   ├── login.php · logout.php · upload.php · install.php
 │   ├── assets/
@@ -258,7 +268,7 @@ Contoh respons ringkasan `/analyze`:
 | Upload file besar selalu gagal | Naikkan `upload_max_filesize` dan `post_max_size` di `C:\xampp\php\php.ini` (mis. 20M) lalu **restart Apache**; pesan error kini menyebutkan kode error PHP secara spesifik |
 | Kode terbaru tidak muncul / perilaku lama | (1) **Tutup lalu jalankan ulang** `jalankan_api.bat` — proses Python lama tetap memakai kode lama walau file sudah diganti; (2) browser: Ctrl+F5 (cache JS/CSS sudah otomatis di-bust via versi file, tapi hard refresh lebih aman); (3) pastikan hanya ADA SATU salinan proyek di htdocs — hapus salinan ganda di folder Downloads |
 | Jumlah komoditas tidak sesuai harapan | Cek mapping **kolom kualitas** — "Beras Premium" & "Beras Medium" dihitung 2 komoditas; tanpa kolom kualitas keduanya menyatu |
-| **Dropdown Kuesioner kosong / hanya "Semua Kuesioner"** | Data yang sedang tampil dianalisis **sebelum fitur ini ada** (kolom kuesioner belum tersimpan). Solusi: buka `install.php` sekali (menambah kolom `kuesioner` di `analisis_seri`), lalu **unggah ulang** file dengan **Kolom Kuesioner** dipilih di halaman upload (mis. kolom `Kuesioner` → HKD-1/HKD-2.1) dan analisis kembali |
+| **Dropdown Jenis Dokumen kosong / hanya "Semua Jenis Dokumen"** | Data yang sedang tampil dianalisis **sebelum fitur ini ada** (kolom kuesioner belum tersimpan). Solusi: buka `install.php` sekali (menambah kolom `kuesioner` di `analisis_seri`), lalu **unggah ulang** file dengan **Kolom Kuesioner** dipilih di halaman upload (mis. kolom `Kuesioner` → HKD-1/HKD-2.1) dan analisis kembali |
 | **Login viewer gagal** | Akun `viewer` / `viewer123` dibuat oleh `install.php` versi baru; bila database lama dibuat sebelum update, jalankan `install.php` sekali untuk menambah role viewer (atau import ulang `schema.sql` — hati-hati: menghapus data unggahan) |
 | Peta kecamatan tidak muncul | Nama kecamatan di Excel harus cocok dengan `KOORDINAT_KEC` di `landing.js` (daftar 23 kecamatan Halmahera Utara; tambahkan/sesuaikan bila perlu) |
 | Peta/grafik kosong | CDN (Tailwind/ECharts/Leaflet/OSM) butuh internet saat pertama load |

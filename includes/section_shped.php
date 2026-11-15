@@ -1,41 +1,23 @@
 <?php
-/**
- * includes/section_shped.php — Bagian "Informasi Data SHPED".
- * Dipakai oleh index.php (halaman publik) DAN dashboard.php (admin/viewer).
- *
- * Variabel yang dapat diatur SEBELUM include:
- *   $shped_tabel (bool, default false) → tampilkan tabel harga bulanan di
- *   bawah panel detail. Tabel ini ikut dipindah ke dashboard admin —
- *   halaman publik menampilkan dropdown + detail + grafik saja.
- *
- * Dropdown filter (kiri → kanan):
- *   1. KUESIONER  (kode kuesioner dari kolom "Kuesioner" file SHPED,
- *                  mis. HKD-1, HKD-2.1) — filter agar daftar komoditas pada
- *                  card/grid menyesuaikan kuesioner yang dipilih.
- *   2. Komoditas (+ daftar kualitas di bawah nama komoditas)
- *   3. Tahun
- *   4. Kecamatan
- *
- * Seluruh data dimuat oleh assets/js/landing.js dari api/data.php?action=landing.
- */
+
 $shped_tabel = $shped_tabel ?? false;
 ?>
 
-<section id="shped" class="mb-10 mt-10">
+<section id="shped" class="mb-10">
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
     <div>
       <h2 class="text-xl font-extrabold tracking-tight">Informasi Data SHPED</h2>
-      <p class="mt-1 text-sm text-slate-500">Pilih kuesioner, komoditas, tahun, dan kecamatan untuk melihat detail harga bulanannya.</p>
+      <p class="mt-1 text-sm text-slate-500">Pilih jenis dokumen (kuesioner), komoditas, tahun, dan kecamatan untuk melihat detail harga bulanannya.</p>
     </div>
 
     <!-- Empat tombol dropdown: Kuesioner · Komoditas (+kualitas) · Tahun · Kecamatan -->
     <div class="flex flex-wrap items-center gap-2.5">
-      <!-- Dropdown KUESIONER — berada di samping KIRI tombol komoditas -->
+      <!-- Dropdown JENIS DOKUMEN (kode kuesioner SHPED) — di samping KIRI tombol komoditas -->
       <div class="relative" id="ddKuesioner">
         <button id="btnDdKuesioner" type="button"
                 class="dd-btn inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-card ring-1 ring-slate-200 hover:ring-primary-300">
           <i class="fa-solid fa-clipboard-list text-violet-500" aria-hidden="true"></i>
-          <span id="lblKuesioner">Kuesioner…</span>
+          <span id="lblKuesioner">Jenis Dokumen…</span>
           <i class="fa-solid fa-chevron-down text-[10px] text-slate-400" aria-hidden="true"></i>
         </button>
         <div id="panelKuesioner" class="dd-panel dd-panel-left hidden">

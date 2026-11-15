@@ -7,7 +7,7 @@
 <!-- ===== FOOTER ===== -->
 <footer class="border-t border-slate-200 bg-white mt-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-slate-500">
-        <p>&copy; <?= date('Y') ?> Badan Pusat Statistik - Halmahera Utara</p>
+        <p>&copy; <?= date('Y') ?> Badan Pusat Statistik Kabupaten Halmahera Utara</p>
     </div>
 </footer>
 <?php
