@@ -12,3 +12,6 @@ pandas>=2.3                       # baca CSV/Excel (kompatibel pandas 2.x & 3.x)
 numpy>=2.3                        # statistik (std, mean, dsb.)
 openpyxl>=3.1.5                   # mesin pembaca .xlsx
 mysql-connector-python>=9.3       # penulisan hasil analisis ke MySQL
+a2wsgi>=1.10                      # KHUSUS cPanel "Setup Python App": jembatan
+                                  # ASGI (FastAPI) → WSGI (Passenger) via
+                                  # passenger_wsgi.py — diabaikan bila lokal

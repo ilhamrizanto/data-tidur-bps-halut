@@ -3,6 +3,14 @@ config.py — Konfigurasi layanan analisis Python (FastAPI).
 """
 
 # ---------- Koneksi MySQL (harus sama dengan app/config/config.php) ----------
+# LOKAL (XAMPP)  : biarkan seperti di bawah.
+# HOSTING cPanel : ganti sesuai kredensial MySQL cPanel Anda (prefix akun,
+#                  mis. thek3726_...) — buat lewat menu MySQL® Databases,
+#                  host umumnya "localhost":
+#   "host": "localhost",
+#   "user": "thek3726_tidur",
+#   "password": "password-db-anda",
+#   "database": "thek3726_db_data_tidur",
 DB = {
     "host": "127.0.0.1",
     "user": "root",
