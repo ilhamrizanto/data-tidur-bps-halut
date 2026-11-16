@@ -30,13 +30,23 @@ def _analyze():
 
 def test_sample_long_golden():
     r = _analyze()["ringkasan"]
+    # Ringkasan dihitung per NAMA komoditas unik (bukan per seri):
+    # 11 nama komoditas; 4 di antaranya tidur di semua kecamatan-nya.
     assert r["total_baris"] == 165
     assert r["total_seri"] == 55
     assert r["total_komoditas"] == 11
-    assert r["total_tidur"] == 20
-    assert r["total_bergerak"] == 35
+    assert r["total_tidur"] == 4
+    assert r["total_bergerak"] == 7
     assert str(r["periode_mulai"])[:10] == "2026-05-01"
-    assert str(r["periode_selesai"])[:10] == "2026-07-01"
+    assert str(r["periode_selesai"])[:10] == "2026-07-31"
+
+
+def test_jumlah_seri_tidur_dua_puluh():
+    # Level SERI (komoditas × kualitas × kecamatan):
+    # 4 komoditas konstan × 5 kecamatan = 20 seri tidur.
+    seri = _analyze()["seri"]
+    assert sum(1 for s in seri if s["is_tidur"]) == 20
+    assert sum(1 for s in seri if not s["is_tidur"]) == 35
 
 
 def test_semua_seri_tidur_punya_alasan():
