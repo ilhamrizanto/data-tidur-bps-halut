@@ -59,7 +59,7 @@ $canPanel   = $isAdmin || $isViewer; // boleh membuka dashboard admin
     <?php if ($area === 'admin'): ?>
       <div class="hidden items-center gap-1 text-sm font-medium md:flex">
         <a href="dashboard.php" class="rounded-lg px-3 py-2 <?= $active === 'dashboard' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100' ?>">Dashboard</a>
-        <?php if ($isAdmin): ?><a href="upload.php"  class="rounded-lg px-3 py-2 <?= $active === 'upload' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100' ?>">Deteksi</a><?php endif; ?>
+        <?php if ($isAdmin): ?><a href="upload.php"  class="rounded-lg px-3 py-2 <?= $active === 'upload' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100' ?>">Deteksi Data Tidur</a><?php endif; ?>
         <?php if ($isViewer): ?><span class="rounded-lg bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700"><i class="fa-solid fa-eye mr-1.5 text-[10px]" aria-hidden="true"></i>Viewer</span><?php endif; ?>
         <a href="index.php" target="_blank" class="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100">Halaman Publik <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs" aria-hidden="true"></i></a>
         <a href="logout.php" class="ml-2 rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-700"><i class="fa-solid fa-right-from-bracket mr-1.5 text-xs" aria-hidden="true"></i>Keluar</a>
@@ -91,7 +91,7 @@ $canPanel   = $isAdmin || $isViewer; // boleh membuka dashboard admin
   <div id="mobileMenu" class="hidden border-t border-slate-200 bg-white px-4 py-3 md:hidden">
     <?php if ($area === 'admin'): ?>
       <a href="dashboard.php" class="block rounded-lg px-3 py-2 text-sm font-medium <?= $active === 'dashboard' ? 'bg-primary-50 text-primary-700' : 'text-slate-600' ?>">Dashboard</a>
-      <?php if ($isAdmin): ?><a href="upload.php"  class="block rounded-lg px-3 py-2 text-sm font-medium <?= $active === 'upload' ? 'bg-primary-50 text-primary-700' : 'text-slate-600' ?>">Deteksi</a><?php endif; ?>
+      <?php if ($isAdmin): ?><a href="upload.php"  class="block rounded-lg px-3 py-2 text-sm font-medium <?= $active === 'upload' ? 'bg-primary-50 text-primary-700' : 'text-slate-600' ?>">Deteksi Data Tidur</a><?php endif; ?>
       <?php if ($isViewer): ?><span class="block rounded-lg px-3 py-2 text-xs font-semibold text-violet-700"><i class="fa-solid fa-eye mr-1.5 text-[10px]" aria-hidden="true"></i>Mode Viewer — hanya melihat</span><?php endif; ?>
       <a href="index.php"   class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600">Halaman Publik <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs" aria-hidden="true"></i></a>
       <a href="logout.php"  class="mt-2 block rounded-xl bg-slate-900 px-4 py-2 text-center text-sm font-medium text-white"><i class="fa-solid fa-right-from-bracket mr-1.5 text-xs" aria-hidden="true"></i>Keluar</a>

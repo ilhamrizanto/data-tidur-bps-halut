@@ -16,7 +16,7 @@ include __DIR__ . '/includes/header.php';
   <!-- Judul halaman -->
   <div class="mb-8 flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h1 class="text-2xl font-extrabold tracking-tight">BANDA — Deteksi Data Tidur</h1>
+      <h1 class="text-2xl font-extrabold tracking-tight">Deteksi Data Tidur</h1>
       <p class="mt-1 text-sm text-slate-500">
         Pantau, unggah, dan analisis harga komoditas yang konstan tiga bulan atau lebih (data tidur).
         <?php if ($isViewer): ?>Anda masuk sebagai <b>viewer</b> — hanya dapat melihat.<?php endif; ?>

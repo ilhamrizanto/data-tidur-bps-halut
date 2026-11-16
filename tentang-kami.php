@@ -123,7 +123,7 @@ $tahunKini  = date('Y');
         <p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-500 md:text-base">
           Memimpin tim distribusi dan bertanggung jawab atas pengumpulan, pengolahan, serta
           penyebaran data harga SHPED di Kabupaten Halmahera Utara serta memastikan data bulanan
-          lengkap dan berkualitas sebelum dianalisis oleh sistem BANDA (Bangunin Data Tidur).
+          lengkap dan berkualitas sebelum dianalisis oleh sistem Deteksi Data Tidur.
         </p>
       </div>
 

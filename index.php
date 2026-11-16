@@ -50,7 +50,7 @@ $grupKuesMeta = [
           Data harga komoditas pasar · Kabupaten Halmahera Utara
         </span>
         <h1 class="max-w-3xl text-3xl font-extrabold leading-tight tracking-tight md:text-4xl">
-          BANDA — Bangunin Data Tidur pada Harga Komoditas Pasar
+          Deteksi Data Tidur pada Harga Komoditas Pasar
         </h1>
         <p class="mt-3 max-w-2xl text-sm font-light leading-relaxed text-emerald-100 md:text-base">
           Platform informasi untuk memantau harga dan perkembangan berbagai komoditas pasar, seperti beras, cabai, bawang, dan kebutuhan pokok lainnya secara mudah dan cepat.

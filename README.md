@@ -1,4 +1,4 @@
-# BANDA — Bangunin Data Tidur · Informasi Data SHPED Kab. Halmahera Utara
+# Deteksi Data Tidur — Informasi Data SHPED Kab. Halmahera Utara
 
 Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konstan (tidak berubah) selama tiga bulan atau lebih** — dari file **Excel/CSV** yang diunggah admin, lalu menampilkannya dengan tampilan bergaya **PIHPS Nasional**.
 
