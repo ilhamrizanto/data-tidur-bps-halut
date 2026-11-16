@@ -26,10 +26,20 @@ Tanggal: 2026-11-16 · Oleh: NOVA (Hermes) · Status: **PRODUCTION-READY (lokal 
 - Admin: `admin` / `Halut.Admin-2026` · Viewer: `viewer` / `Halut.Viewer-2026`
 - DB: `tidur_app` / `tidur-app-local` · MySQL root: `tidur-root-local` · Web: `http://127.0.0.1:8090`
 
+## Status Deployment Produksi (2026-11-16) — TAYANG ✅
+
+• **URL**: `https://data-tidur.t-la-halut.com` (Dokploy, service Compose `projects-datatidur-g86qca`, VPS `45.127.32.109`)
+• Domain: DNS only (grey cloud) → VPS; Traefik → service `web` port **80 (container)**; sertifikat Let's Encrypt
+• Akun admin produksi: `bps8205` (password ada di tab Environment Dokploy, `INSTALL_ADMIN_PASSWORD`)
+• Tersambung: `dokploy-network` (external, swarm overlay) + jaringan internal compose — db/api internal saja, hanya web yang terekspos Traefik
+• Port publish host DIHAPUS dari compose (sempat konflik dengan aplikasi lain di 8080) — routing murni via domain
+• Push riwayat hasil rewrite sudah dilakukan (`--force` sekali, setelah itu push normal)
+• **install.php**: dijalankan sekali (seed akun + migrasi) — dihapus dari container? (cek: buka URL-nya → harus 404; kalau belum: `docker exec projects-datatidur-g86qca-web-1 rm /var/www/html/install.php`). Catatan: file kembali muncul saat redeploy (COPY dari repo) tapi aman — hanya menampilkan checklist tanpa membuat akun baru.
+
 ## Belum / Menunggu Keputusan Owner
 
 1. **Deploy Dokploy** — compose siap; butuh Docker di VPS + env produksi (APP_DEBUG=0, APP_FORCE_HTTPS=1, APP_BEHIND_PROXY=1).
 2. **Rewrite riwayat git** untuk menghapus xlsx lama dari history (destruktif — butuh persetujuan).
-3. Docker Desktop tidak terpasang di mesin ini — verifikasi compose penuh baru bisa di VPS (validasi statis `compose config` tidak tersedia lokal).
+3. Docker Desktop tidak terpasang di mesin lokal — deploy produksi berjalan via Dokploy VPS (sudah beres).
 4. Security headers belum terverifikasi end-to-end (php -S tak proses .htaccess) — otomatis aktif di Apache/Dokploy.
 5. Push ke GitHub + PR/merge ke main dilakukan owner (branch bekerja langsung di main lokal; 11 commit konvensional).
