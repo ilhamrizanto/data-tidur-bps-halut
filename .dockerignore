@@ -1,0 +1,10 @@
+.git
+.hermes
+.env
+**/__pycache__
+**/*.pyc
+python-api/.venv
+python-api/tests
+uploads/up_*
+.local-stack
+scripts

@@ -1,0 +1,26 @@
+FROM php:8.3-apache
+
+# pdo_mysql (database), curl (proxy ke FastAPI), tzdata (WIT), curl CLI (healthcheck)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libcurl4-openssl-dev curl tzdata \
+ && docker-php-ext-install pdo_mysql curl \
+ && rm -rf /var/lib/apt/lists/* \
+ && a2enmod headers rewrite \
+ && printf '<Directory /var/www/html>\n  AllowOverride All\n</Directory>\n' \
+      > /etc/apache2/conf-available/allowoverride.conf \
+ && a2enconf allowoverride
+
+ENV TZ=Asia/Jayapura
+
+COPY . /var/www/html/
+
+# Jangan ekspos file internal lewat HTTP (deploy/, env, stack lokal, python-api)
+RUN rm -rf /var/www/html/deploy /var/www/html/.env /var/www/html/.local-stack \
+           /var/www/html/python-api /var/www/html/scripts \
+ && chown -R www-data:www-data /var/www/html/uploads || true
+
+COPY deploy/web-entrypoint.sh /usr/local/bin/web-entrypoint.sh
+RUN chmod +x /usr/local/bin/web-entrypoint.sh
+
+EXPOSE 80
+ENTRYPOINT ["web-entrypoint.sh"]
