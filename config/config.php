@@ -11,8 +11,8 @@ function env(string $key, ?string $default = null): ?string
     return ($v === false || $v === '') ? $default : $v;
 }
 
-define('APP_NAME', 'Deteksi Data Tidur');
-define('APP_TAGLINE', 'Analisis Harga Komoditas Pasar');
+define('APP_NAME', 'BANDA');
+define('APP_TAGLINE', 'Bangunin Data Tidur · Deteksi Harga Komoditas Pasar');
 
 // ---------- Database MySQL ----------
 define('DB_HOST', env('DB_HOST', '127.0.0.1'));

@@ -12,6 +12,7 @@ Tanggal: 2026-11-16 · Oleh: NOVA (Hermes) · Status: **PRODUCTION-READY (lokal 
 6. Docker/Dokploy: `deploy/Dockerfile.web` (php:8.3-apache + pdo_mysql/curl + AllowOverride + entrypoint chown), `deploy/Dockerfile.api` (python:3.12-slim + uvicorn), `deploy/docker-compose.yml` (3 service + healthcheck + init skema + shared uploads volume), `.env.example`, `.dockerignore`.
 7. Dokumentasi: README profesional (arsitektur, 3 opsi lokal, deploy Dokploy step-by-step, tabel env, pengujian, keamanan, troubleshooting), PENJELASAN_KODE.md + bagian "Perubahan Versi Produksi", `.hermes.md`, HANDOVER.md ini.
 8. Smoke script `scripts/smoke.sh` + router lokal `scripts/router-local.php`.
+9. **Branding BANDA (Bangunin Data Tidur)**: nama resmi aplikasi (ide: Bangunin Data + Laut Banda). `APP_NAME=BANDA`, tagline `Bangunin Data Tidur · Deteksi Harga Komoditas Pasar`; hero index, h1 dashboard, nav, tentang-kami, README di-brand ulang. Logo: **diputuskan tetap pakai logo BPS lama (`assets/img/logo.png`)** — logo hasil generate AI sempat dipasang lalu di-revert penuh atas permintaan owner (file banda-logo*.png & favicon.png sudah dihapus, semua referensi kembali ke logo.png). Verifikasi revert: grep bersih, lint OK, logo.png 200, index.php merujuk logo.png ✓.
 
 ## Verifikasi Fisik (lokal, stack native Windows)
 
@@ -29,7 +30,7 @@ Tanggal: 2026-11-16 · Oleh: NOVA (Hermes) · Status: **PRODUCTION-READY (lokal 
 ## Belum / Menunggu Keputusan Owner
 
 1. **Deploy Dokploy** — compose siap; butuh Docker di VPS + env produksi (APP_DEBUG=0, APP_FORCE_HTTPS=1, APP_BEHIND_PROXY=1).
-2. **Rewrite riwayat git** untuk menghapus xlsx lama dari history (destruktif — butuh persetujuan).
+2. ~~Rewrite riwayat git~~ **SELESAI (2026-11-16)** — `uploads/up_20261110_*.xlsx` dan `python-api/__pycache__` sudah dihapus dari SELURUH riwayat via `git-filter-repo` (2 commit kosong ikut terprune; 27 → 25 commit). Backup: `C:\Users\TECNO\Desktop\Project\data-tidur-bps-halut-backup-pre-rewrite.bundle`. **Konsekuensi: semua hash berubah — push pertama ke GitHub WAJIB `git push --force origin main`** (origin sudah di-re-add; upstream tracking perlu di-set ulang). `git fsck` bersih.
 3. Docker Desktop tidak terpasang di mesin ini — verifikasi compose penuh baru bisa di VPS (validasi statis `compose config` tidak tersedia lokal).
 4. Security headers belum terverifikasi end-to-end (php -S tak proses .htaccess) — otomatis aktif di Apache/Dokploy.
-5. Push ke GitHub + PR/merge ke main dilakukan owner (branch bekerja langsung di main lokal; 11 commit konvensional).
+5. **Owner menahan push/commit** sampai pengembangan dinyatakan selesai — perubahan HANDOVER ini pun sengaja belum di-commit.
