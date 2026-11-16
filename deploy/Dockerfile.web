@@ -6,6 +6,8 @@ RUN apt-get update \
  && docker-php-ext-install pdo_mysql curl \
  && rm -rf /var/lib/apt/lists/* \
  && a2enmod headers rewrite \
+ && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
+ && a2enconf servername \
  && printf '<Directory /var/www/html>\n  AllowOverride All\n</Directory>\n' \
       > /etc/apache2/conf-available/allowoverride.conf \
  && a2enconf allowoverride

@@ -63,6 +63,9 @@ services:
       TZ: Asia/Jayapura
     volumes:
       - uploads_data:/var/www/html/uploads
+    networks:
+      - default
+      - dokploy-network
     depends_on:
       db:
         condition: service_healthy
@@ -77,3 +80,8 @@ services:
 volumes:
   db_data:
   uploads_data:
+
+networks:
+  default: {}
+  dokploy-network:
+    external: true
