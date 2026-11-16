@@ -4,6 +4,9 @@
  * Role 'admin'  → akses penuh (unggah, analisis, hapus).
  * Role 'viewer' → hanya dapat MELIHAT semua tampilan (halaman depan +
  *                 dashboard admin), tidak dapat mengunggah/mengedit/menghapus.
+ *
+ * Anti-bruteforce: maksimal 5 login gagal per IP+username dalam 15 menit
+ * (tabel login_attempts; dibersihkan otomatis setiap percobaan).
  */
 
 require_once __DIR__ . '/includes/auth.php';
@@ -18,24 +21,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_verify($_POST['_csrf'] ?? null)) {
         $error = 'Sesi kedaluwarsa. Silakan coba lagi.';
     } else {
+        $ip       = client_ip();
         $username = trim($_POST['username'] ?? '');
         $password = (string)($_POST['password'] ?? '');
         try {
-            $stmt = db()->prepare('SELECT * FROM users WHERE username = ? LIMIT 1');
-            $stmt->execute([$username]);
-            $user = $stmt->fetch();
+            $pdo = db();
+            $pdo->exec('DELETE FROM login_attempts WHERE attempted_at < NOW() - INTERVAL 15 MINUTE');
+            $st = $pdo->prepare('SELECT COUNT(*) AS c FROM login_attempts
+                                 WHERE ip_address = ? AND username = ?
+                                   AND attempted_at >= NOW() - INTERVAL 15 MINUTE');
+            $st->execute([$ip, $username]);
+            if ((int)$st->fetch()['c'] >= 5) {
+                $error = 'Terlalu banyak percobaan gagal. Coba lagi dalam 15 menit.';
+            } else {
+                $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ? LIMIT 1');
+                $stmt->execute([$username]);
+                $user = $stmt->fetch();
 
-            if ($user && in_array($user['role'], ['admin', 'viewer'], true)
-                    && password_verify($password, $user['password'])) {
-                session_regenerate_id(true);          // cegah session fixation
-                $_SESSION['admin_id']   = (int)$user['id'];
-                $_SESSION['admin_name'] = $user['nama'] ?: $user['username'];
-                $_SESSION['admin_role'] = $user['role'];   // 'admin' | 'viewer'
-                header('Location: dashboard.php');
-                exit;
+                if ($user && in_array($user['role'], ['admin', 'viewer'], true)
+                        && password_verify($password, $user['password'])) {
+                    $pdo->prepare('DELETE FROM login_attempts WHERE ip_address = ? AND username = ?')
+                        ->execute([$ip, $username]);
+                    session_regenerate_id(true);          // cegah session fixation
+                    $_SESSION['admin_id']   = (int)$user['id'];
+                    $_SESSION['admin_name'] = $user['nama'] ?: $user['username'];
+                    $_SESSION['admin_role'] = $user['role'];   // 'admin' | 'viewer'
+                    header('Location: dashboard.php');
+                    exit;
+                }
+                $pdo->prepare('INSERT INTO login_attempts (ip_address, username) VALUES (?,?)')
+                    ->execute([$ip, $username]);
+                $error = 'Username atau password salah.';
+                usleep(400000);
             }
-            $error = 'Username atau password salah.';
-            usleep(400000);                            // jeda kecil anti brute-force
         } catch (Throwable $e) {
             handle_db_error($e);
         }

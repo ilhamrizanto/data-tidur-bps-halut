@@ -36,12 +36,16 @@ from config import UPLOAD_DIR
 
 app = FastAPI(title="API Deteksi Data Tidur", version="2.0.0")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],          # dev lokal; perketat untuk produksi
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS default-DENY: browser tidak pernah memanggil FastAPI langsung (PHP proxy).
+# Aktifkan hanya bila CORS_ORIGINS diisi (mis. "http://localhost:8090").
+_origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
+if _origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_origins,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 # ----------------------------- Model request -----------------------------
@@ -65,6 +69,7 @@ class Mapping(BaseModel):
 
 class AnalyzeBody(BaseModel):
     file_path: str
+    file_name: Optional[str] = None    # basename aman; di-resolve di UPLOAD_DIR api
     upload_id: int
     mapping: Mapping
     cfg: Optional[Dict[str, Any]] = None
@@ -79,9 +84,16 @@ def _dump_mapping(m: Mapping) -> dict:
         return m.dict()
 
 
-def _safe_path(p: str) -> str:
-    """Hanya izinkan membaca file di dalam folder uploads PHP (anti path traversal)."""
-    real = os.path.realpath(p)
+def _safe_path(p: str, file_name: Optional[str] = None) -> str:
+    """Hanya izinkan membaca file di dalam folder uploads PHP (anti path traversal).
+
+    file_name (basename) lebih diprioritaskan — path file di-resolve di dalam
+    UPLOAD_DIR milik kontainer api ini, sehingga kompatibel lintas kontainer
+    yang titik mount folder uploads-nya berbeda (Docker/Dokploy).
+    Tanpa file_name → validasi realpath legacy (mode lokal).
+    """
+    real = os.path.realpath(os.path.join(UPLOAD_DIR, os.path.basename(file_name))) \
+           if file_name else os.path.realpath(p)
     base = os.path.realpath(UPLOAD_DIR)
     if not real.startswith(base + os.sep) and real != base:
         # Pesan menyertakan base agar salah path langsung terlihat saat debugging.
@@ -123,7 +135,7 @@ def health():
         "version": "2.0.0",
         "python": platform.python_version(),   # bukti versi Python terbaru
         # Info diagnosis path — bila /analyze gagal 400, bandingkan folder ini
-        # dengan path yang dikirim PHP (app/config/config.php → UPLOAD_DIR).
+        # dengan path yang dikirim PHP (config/config.php + env UPLOAD_DIR).
         "uploads_dir": UPLOAD_DIR,
         "uploads_dir_ada": os.path.isdir(UPLOAD_DIR),
     }
@@ -160,7 +172,7 @@ async def inspect(file: UploadFile = File(...)):
 
 @app.post("/analyze")
 def analyze(body: AnalyzeBody):
-    path = _safe_path(body.file_path)
+    path = _safe_path(body.file_path, body.file_name)
 
     try:
         result = analyzer.analyze_file(path, _dump_mapping(body.mapping), body.cfg)

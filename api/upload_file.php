@@ -53,7 +53,7 @@ try {
     $uploadId = (int)db()->lastInsertId();
 } catch (Throwable $e) {
     @unlink($dest);
-    json_out(['ok' => false, 'error' => 'Gagal mencatat di database: ' . $e->getMessage()], 500);
+    json_out(['ok' => false, 'error' => 'Gagal mencatat di database: ' . err_detail($e)], 500);
 }
 
 // 3) Minta FastAPI memeriksa struktur file

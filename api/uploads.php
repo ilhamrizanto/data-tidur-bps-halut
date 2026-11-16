@@ -74,5 +74,5 @@ try {
 
     json_out(['ok' => false, 'error' => 'Metode tidak valid'], 405);
 } catch (Throwable $e) {
-    json_out(['ok' => false, 'error' => $e->getMessage()], 500);
+    json_out(['ok' => false, 'error' => err_detail($e)], 500);
 }

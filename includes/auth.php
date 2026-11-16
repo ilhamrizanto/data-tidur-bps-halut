@@ -10,6 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start([
         'cookie_httponly' => true,
         'cookie_samesite' => 'Lax',
+        'cookie_secure'   => APP_FORCE_HTTPS,
     ]);
 }
 
@@ -91,6 +92,24 @@ function json_out(array $data, int $code = 200): never
     exit;
 }
 
+/** IP klien; hanya percayai X-Forwarded-For bila APP_BEHIND_PROXY aktif
+ *  (deploy di balik proxy Dokploy/Traefik). */
+function client_ip(): string
+{
+    if (APP_BEHIND_PROXY && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+}
+
+/** Detail error HANYA saat APP_DEBUG; detail selalu dicatat ke error_log server. */
+function err_detail(Throwable $e): string
+{
+    error_log('[data-tidur] ' . $e->getMessage());
+    return APP_DEBUG ? $e->getMessage()
+                     : 'Terjadi kesalahan internal. Hubungi administrator.';
+}
+
 /** Halaman error database yang ramah (untuk halaman web biasa). */
 function handle_db_error(Throwable $e): never
 {
@@ -103,9 +122,9 @@ function handle_db_error(Throwable $e): never
        . '<div class="max-w-lg w-full bg-white rounded-2xl shadow-card p-8 text-center">'
        . '<div class="text-5xl mb-4 text-amber-500"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></div>'
        . '<h1 class="text-xl font-bold text-slate-800 mb-2">Koneksi database gagal</h1>'
-       . '<p class="text-slate-600 text-sm mb-4">Pastikan <b>MySQL</b> di XAMPP sudah berjalan dan file '
-       . '<code>database/schema.sql</code> sudah diimpor lewat phpMyAdmin.</p>'
-       . '<p class="text-xs text-slate-400 break-words">' . e($e->getMessage()) . '</p>'
+       . '<p class="text-slate-600 text-sm mb-4">Pastikan <b>MySQL/MariaDB</b> sudah berjalan dan file '
+       . '<code>database/db_data_tidur.sql</code> sudah diimpor lewat phpMyAdmin.</p>'
+       . '<p class="text-xs text-slate-400 break-words">' . e(err_detail($e)) . '</p>'
        . '</div></body></html>';
     exit;
 }

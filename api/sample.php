@@ -28,11 +28,12 @@ try {
     $uploadId = (int)db()->lastInsertId();
 } catch (Throwable $e) {
     @unlink($dest);
-    json_out(['ok' => false, 'error' => 'Database error: ' . $e->getMessage()], 500);
+    json_out(['ok' => false, 'error' => 'Database error: ' . err_detail($e)], 500);
 }
 
 $payload = [
     'file_path' => $dest,
+    'file_name' => basename($stored),   // di-resolve FastAPI di UPLOAD_DIR-nya (lintas kontainer)
     'upload_id' => $uploadId,
     'mapping'   => [
         'mode'          => 'long',

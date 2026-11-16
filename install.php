@@ -5,8 +5,8 @@ require_once __DIR__ . '/includes/auth.php';   // helper e() & handle_db_error()
 
 $langkah = [];
 
-// Aplikasi ini ditargetkan untuk PHP 8.5 (minimal PHP 8.1 karena tipe kembalian `never`)
-$phpOk = PHP_VERSION_ID >= 80500;
+// Aplikasi membutuhkan minimal PHP 8.1 (tipe kembalian `never`); diuji pada 8.3 & 8.5
+$phpOk = PHP_VERSION_ID >= 80100;
 
 try {
     $pdo = db();
@@ -25,22 +25,52 @@ try {
     // 1b. Migrasi database lama: pastikan kolom role mendukung 'viewer'
     $pdo->exec("ALTER TABLE users MODIFY role ENUM('admin','viewer') NOT NULL DEFAULT 'admin'");
 
-    // 2. Seed akun admin
+    // 1c. Migrasi produksi: tabel login_attempts (throttle login 5 gagal / 15 menit)
+    $adaTabelLa = $pdo->query("SHOW TABLES LIKE 'login_attempts'")->fetch();
+    if (!$adaTabelLa) {
+        $pdo->exec("CREATE TABLE login_attempts (
+            id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            ip_address   VARCHAR(45)  NOT NULL,
+            username     VARCHAR(50)  NOT NULL,
+            attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_la (ip_address, username, attempted_at)
+        ) ENGINE=InnoDB");
+        $langkah[] = ['Tabel login_attempts dibuat (throttle login produksi)', true];
+    } else {
+        $langkah[] = ['Tabel login_attempts sudah ada', true];
+    }
+
+    // 2. Seed akun admin — username & password dari ENV (produksi);
+    //    password kosong = diacak & ditampilkan SEKALI di halaman ini.
+    $adminUser    = env('INSTALL_ADMIN_USERNAME', 'admin');
+    $adminPassEnv = env('INSTALL_ADMIN_PASSWORD');
+    $buatAdmin    = false;
+    $adminPassAcak = '';
     $jumlah = (int)$pdo->query('SELECT COUNT(*) AS c FROM users')->fetch()['c'];
     if ($jumlah === 0) {
+        $buatAdmin = true;
+        $adminPass = $adminPassEnv !== null ? $adminPassEnv : bin2hex(random_bytes(8)); // 16 karakter acak
+        if ($adminPassEnv === null) $adminPassAcak = $adminPass;
         $pdo->prepare('INSERT INTO users (username, password, nama, role) VALUES (?,?,?,?)')
-            ->execute(['admin', password_hash('admin123', PASSWORD_DEFAULT), 'Administrator', 'admin']);
-        $langkah[] = ['Akun admin dibuat → username: admin / password: admin123', true];
+            ->execute([$adminUser, password_hash($adminPass, PASSWORD_DEFAULT), 'Administrator', 'admin']);
+        $langkah[] = ["Akun admin dibuat → username: {$adminUser}" . ($adminPassEnv !== null ? ' (password dari ENV)' : ' (password acak, lihat di bawah)'), true];
     } else {
         $langkah[] = ["Akun sudah ada ($jumlah user). Melewati pembuatan akun.", true];
     }
 
     // 3. Seed akun viewer (bila belum ada) — hanya bisa melihat
+    $viewerUser     = env('INSTALL_VIEWER_USERNAME', 'viewer');
+    $viewerPassEnv  = env('INSTALL_VIEWER_PASSWORD');
+    $buatViewer     = false;
+    $viewerPassAcak = '';
     $adaViewer = (int)$pdo->query("SELECT COUNT(*) AS c FROM users WHERE role = 'viewer'")->fetch()['c'];
     if ($adaViewer === 0) {
+        $buatViewer = true;
+        $viewerPass = $viewerPassEnv !== null ? $viewerPassEnv : bin2hex(random_bytes(8));
+        if ($viewerPassEnv === null) $viewerPassAcak = $viewerPass;
         $pdo->prepare('INSERT INTO users (username, password, nama, role) VALUES (?,?,?,?)')
-            ->execute(['viewer', password_hash('viewer123', PASSWORD_DEFAULT), 'Pengguna (View Only)', 'viewer']);
-        $langkah[] = ['Akun viewer dibuat → username: viewer / password: viewer123 (hanya dapat melihat)', true];
+            ->execute([$viewerUser, password_hash($viewerPass, PASSWORD_DEFAULT), 'Pengguna (View Only)', 'viewer']);
+        $langkah[] = ["Akun viewer dibuat → username: {$viewerUser}" . ($viewerPassEnv !== null ? ' (password dari ENV)' : ' (password acak, lihat di bawah)') . ' (hanya dapat melihat)', true];
     } else {
         $langkah[] = ['Akun viewer sudah ada. Melewati pembuatan akun viewer.', true];
     }
@@ -99,8 +129,7 @@ try {
       <ul class="mb-6 space-y-2 text-sm">
         <?php if (!$phpOk): ?>
           <li class="flex items-start gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-amber-700">
-            <i class="fa-solid fa-triangle-exclamation mt-0.5" aria-hidden="true"></i><span>PHP <?= e(PHP_VERSION) ?> terdeteksi — aplikasi ditargetkan untuk <b>PHP 8.5</b>.
-              Beberapa kode memakai fitur PHP 8.5 (pipe operator <code>|&gt;</code>); silakan gunakan XAMPP 8.5.x.</span>
+            <i class="fa-solid fa-triangle-exclamation mt-0.5" aria-hidden="true"></i><span>PHP <?= e(PHP_VERSION) ?> terdeteksi — aplikasi butuh minimal <b>PHP 8.1</b> (tipe kembalian <code>never</code>). Gunakan XAMPP 8.1+ atau PHP 8.3.</span>
           </li>
         <?php endif; ?>
         <?php foreach ($langkah as [$teks]): ?>
@@ -109,12 +138,26 @@ try {
           </li>
         <?php endforeach; ?>
         <li class="flex items-start gap-2 rounded-xl bg-blue-50 px-4 py-2.5 text-blue-700">
-          <i class="fa-solid fa-circle-info mt-0.5" aria-hidden="true"></i><span>Versi PHP aktif: <b><?= e(PHP_VERSION) ?></b> · Target: PHP 8.5 (XAMPP 8.5.x) + Python 3.15 untuk layanan analisis.</span>
+          <i class="fa-solid fa-circle-info mt-0.5" aria-hidden="true"></i><span>Versi PHP aktif: <b><?= e(PHP_VERSION) ?></b> · Target: PHP 8.1+ + Python 3.12+ untuk layanan analisis.</span>
         </li>
       </ul>
+
+      <?php if ($buatAdmin && $adminPassAcak !== ''): ?>
+        <div class="mb-3 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <i class="fa-solid fa-key mt-0.5" aria-hidden="true"></i>
+          <span>PASSWORD ADMIN (tampil <b>SEKALI</b> ini — catat sekarang!): <b><?= e($adminPassAcak) ?></b></span>
+        </div>
+      <?php endif; ?>
+      <?php if ($buatViewer && $viewerPassAcak !== ''): ?>
+        <div class="mb-3 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <i class="fa-solid fa-key mt-0.5" aria-hidden="true"></i>
+          <span>PASSWORD VIEWER (tampil <b>SEKALI</b> ini — catat sekarang!): <b><?= e($viewerPassAcak) ?></b></span>
+        </div>
+      <?php endif; ?>
+
       <div class="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
         <i class="fa-solid fa-triangle-exclamation mt-0.5" aria-hidden="true"></i>
-        <span>Untuk keamanan, <b>hapus file install.php</b> ini setelah instalasi, dan ganti password admin.</span>
+        <span>Untuk keamanan, <b>hapus file install.php</b> ini setelah instalasi di server produksi.</span>
       </div>
       <div class="mt-6 flex gap-3">
         <a href="login.php" class="flex-1 rounded-xl bg-primary-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-primary-700">Login Admin</a>
@@ -124,7 +167,7 @@ try {
       <div class="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-700">
         <i class="fa-solid fa-circle-xmark mt-0.5" aria-hidden="true"></i>
         <span>Instalasi gagal: <?= e($pesanError ?? '') ?><br><br>
-        Pastikan MySQL berjalan dan <code>database/schema.sql</code> sudah diimpor.
+        Pastikan MySQL berjalan dan <code>database/db_data_tidur.sql</code> sudah diimpor.
       </div>
     <?php endif; ?>
   </div>

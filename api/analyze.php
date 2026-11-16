@@ -18,7 +18,7 @@ $body = json_decode(file_get_contents('php://input'), true) ?: [];
 
 $uploadId = (int)($body['upload_id'] ?? 0);
 // Format baris sudah dihapus dari UI — default kini 'wide'. Mode 'long' tetap
-// diterima bila ada pemanggil programatik (mis. scripts/test_api.py).
+// diterima bila ada pemanggil programatik (mis. python-api/tests/).
 $mode     = (($body['mode'] ?? 'wide') === 'long') ? 'long' : 'wide';
 $komCol   = trim((string)($body['komoditas_col'] ?? ''));
 $valueCol = trim((string)($body['value_col'] ?? ''));
@@ -41,7 +41,7 @@ try {
     $stmt->execute([$uploadId]);
     $row = $stmt->fetch();
 } catch (Throwable $e) {
-    json_out(['ok' => false, 'error' => 'Database error: ' . $e->getMessage()], 500);
+    json_out(['ok' => false, 'error' => 'Database error: ' . err_detail($e)], 500);
 }
 if (!$row) json_out(['ok' => false, 'error' => 'Unggahan tidak ditemukan'], 404);
 
@@ -50,9 +50,12 @@ if (!$path || strpos($path, realpath(UPLOAD_DIR)) !== 0) {
     json_out(['ok' => false, 'error' => 'File fisik tidak ditemukan di server'], 404);
 }
 
-// Teruskan ke FastAPI (file dibaca lewat path — tanpa upload ulang, efisien)
+// Teruskan ke FastAPI (file dibaca lewat path — tanpa upload ulang, efisien).
+// file_name = basename → di-resolve FastAPI di UPLOAD_DIR miliknya, sehingga
+// aman lintas kontainer yang titik mount folder uploads-nya berbeda.
 $payload = [
     'file_path' => $path,
+    'file_name' => $row['stored_name'],
     'upload_id' => $uploadId,
     'mapping'   => [
         'mode'          => $mode,

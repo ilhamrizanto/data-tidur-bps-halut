@@ -103,3 +103,16 @@ CREATE TABLE analisis_seri (
   CONSTRAINT fk_seri_upload FOREIGN KEY (upload_id)
     REFERENCES uploads(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- 5) login_attempts : throttle login gagal (maks 5 per IP+username / 15 menit).
+--    Dibersihkan otomatis oleh login.php setiap percobaan.
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS login_attempts;
+CREATE TABLE login_attempts (
+  id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  ip_address   VARCHAR(45)  NOT NULL,
+  username     VARCHAR(50)  NOT NULL,
+  attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_la (ip_address, username, attempted_at)
+) ENGINE=InnoDB;
