@@ -1,1 +1,16 @@
-sample/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Upload runtime: data pengguna TIDAK masuk repo (htaccess & README tetap)
+uploads/*
+!uploads/.htaccess
+!uploads/README.txt
+
+# Environment & secret
+.env
+
+# Stack lokal non-Docker (MariaDB portable, log runtime)
+.local-stack/
+*.log
