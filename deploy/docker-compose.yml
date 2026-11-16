@@ -63,8 +63,6 @@ services:
       TZ: Asia/Jayapura
     volumes:
       - uploads_data:/var/www/html/uploads
-    ports:
-      - "${WEB_PORT:-8090}:80"
     depends_on:
       db:
         condition: service_healthy
