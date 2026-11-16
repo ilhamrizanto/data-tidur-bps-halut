@@ -27,7 +27,7 @@ Dokumen ini menjelaskan **setiap file** pada proyek *Deteksi Data Tidur — Info
 | `harga_bulanan` | **Harga per BULAN**: 1 baris = 1 harga satu bulan untuk 1 kombinasi **komoditas × kualitas × kecamatan** (kolom `bulan` bertipe DATE = tanggal 1). Sumber titik semua grafik, tabel bulanan, dan peta. |
 | `analisis_seri` | Hasil analisis per seri: **`kuesioner`** (kode kuesioner file SHPED — HKD-1, HKD-2.1 — sumber dropdown filter), `jumlah_bulan`, harga awal/akhir/min/max, `perubahan_persen`, **`is_tidur`**, `alasan_tidur`, `bulan_mulai/selesai`. |
 
-**Relasi:** `harga_bulanan` dan `analisis_seri` merujuk `uploads(id)` dengan **ON DELETE CASCADE** — menghapus unggahan otomatis membersihkan semua turunannya. Charset `utf8mb4` agar nama komoditas aman. `schema.sql` juga menghapus tabel versi lama (`harga_harian`) bila ada.
+**Relasi:** `harga_bulanan` dan `analisis_seri` merujuk `uploads(id)` dengan **ON DELETE CASCADE** — menghapus unggahan otomatis membersihkan semua turunannya. Charset `utf8mb4` agar nama komoditas aman. `db_data_tidur.sql` juga menghapus tabel versi lama (`harga_harian`) bila ada.
 
 > **Migrasi database lama:** `install.php` otomatis menjalankan `ALTER TABLE analisis_seri ADD COLUMN kuesioner ...` (bila kolom belum ada) dan `ALTER TABLE users MODIFY role ENUM('admin','viewer')` — sehingga database versi sebelumnya tidak perlu di-import ulang.
 
