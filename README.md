@@ -1,8 +1,10 @@
-# Deteksi Data Tidur — Informasi Data SHPED Halmahera Utara
+# Deteksi Data Tidur — Informasi Data SHPED Kab. Halmahera Utara
 
-Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konstan (tidak berubah) selama tiga bulan atau lebih** — dari file **Excel/CSV** yang diunggah admin, lalu menampilkannya dengan tampilan bergaya **PIHPS Nasional**: kartu ringkasan, *Informasi Data SHPED* dengan dropdown filter **Jenis Dokumen → Komoditas → Tahun → Kecamatan** di **halaman publik**, sedangkan **tabel harga bulanan, galeri grafik 1 komoditas = 1 grafik (4 kolom × 6 baris per halaman), peta harga Kabupaten Halmahera Utara, dan tabel kelengkapan data** kini **hanya ditampilkan di dashboard admin** (dapat dilihat admin maupun viewer).
+Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konstan (tidak berubah) selama tiga bulan atau lebih** — dari file **Excel/CSV** yang diunggah admin, lalu menampilkannya dengan tampilan bergaya **PIHPS Nasional**.
 
-> **Data tidur** = harga yang konstan **minimal 3 bulan berturut-turut** (konstan hanya 2 bulan **tidak** dihitung). Contoh: harga **beras, gula, dan garam tetap Rp 30.000/kg dari Mei sampai Juli** → sistem menghitungnya sebagai **3 data tidur**.
+**Stack:** PHP 8.1+ (direkomendasikan 8.3) · MySQL/MariaDB · Python 3.12+ · FastAPI · Pandas + NumPy + OpenPyXL · Tailwind CSS · ECharts · Leaflet · **Docker Compose (Dokploy-ready)**
+
+> **Data tidur** = harga yang konstan **minimal 3 bulan berturut-turut** (konstan hanya 2 bulan **tidak** dihitung). Contoh: harga **beras, gula, dan garam tetap Rp 30.000/kg dari Mei sampai Juli** → sistem menghitungnya sebagai **data tidur**.
 
 ---
 
@@ -10,215 +12,180 @@ Aplikasi web untuk **mendeteksi "data tidur"** — harga komoditas yang **konsta
 
 | Sisi | Fitur |
 |---|---|
-| **User (publik)** | **Hero hijau** berfont **DM Sans** (font seluruh situs) + foto **Pasar Modern Tobelo** |
-| | **3 kartu ringkasan** (klik): **Total Komoditas** (persis jumlah komoditas di file Excel), **Komoditas Data Tidur**, dan **Kelengkapan Data** — untuk admin/viewer menuju ke bagian terkait di dashboard |
-| | **Informasi Data SHPED** — **4 tombol dropdown berurutan kiri→kanan**: **JENIS DOKUMEN** (kode dari kolom *Kuesioner* file SHPED — HKD-1, HKD-2.1, … — memfilter daftar komoditas pada card/grid agar **hanya menyesuaikan jenis dokumen terpilih**), **Komoditas** (dengan **daftar kualitas di bawah nama komoditas**), **Tahun**, dan **Kecamatan** (**default: SEMUA KECAMATAN** — rata-rata antar kecamatan) → menampilkan detail harga bulanan + grafik tren. **Dropdown Tahun otomatis berisi tahun dari SEMUA file yang diunggah** — unggah data 2025 lalu 2026 → pilihan **2025 dan 2026 langsung muncul** (lengkap dengan jumlah komoditas & periode per tahun); memilih tahun milik unggahan lain memuat ulang data otomatis |
-| | **Modal Metadata SHPED + Unduh Kuesioner**: kartu metadata membuka pop-up 16 komponen; di **bawah baris Diseminasi** ada tombol **Unduh Kuesioner SHPED (PDF)** → klik → **pilih kuesioner mana yang diunduh** (HD-1…HD-6, HKD-1, HKD-2.1, HKD-2.2 — daftar otomatis dari `app/docs/kuesioner/`) |
-| | **Tentang Kami — halaman tersendiri (`tentang-kami.php`, dibuka di TAB BARU saat menu diklik)** dengan desain ala halaman portofolio: navigasi minimalis dengan **jam langsung WIT** di kanan atas, **kartu profil hero** ("Halo! Saya Ros") + judul jabatan besar, tombol aksi gelap/terang, dan **ikon mengambang di sisi kanan layar**; isinya profil **Tim Distribusi** (ketua **Ros**, anggota **Avhan**), **mentor Frida**, dan **4 tim pengembang** beserta keahlian masing-masing |
-| | **Buku Panduan** di menu navigasi (samping kanan menu Tentang Kami) mengunduh PDF panduan (`docs/Buku_Panduan_Deteksi_Data_Tidur.pdf`) — tombol **"Unduh Buku Panduan"** juga ada di nav & ikon mengambang halaman Tentang Kami |
-| **Dashboard admin** | **Seluruh bagian data dipindah ke sini** (tidak lagi di halaman publik): **tabel harga bulanan** komoditas terpilih, **grid grafik ala PIHPS Nasional** (4 kolom × 6 baris per halaman, klik kartu = buka detail), **peta harga** Leaflet per kecamatan (hijau terendah → merah tertinggi + legenda + peringkat), dan **Kelengkapan Data** (tab *Semua / Data Tidur / Harga Bergerak*, pencarian, halaman, **Unduh CSV/Excel**) |
-| **Role** | **Login admin & viewer** (bcrypt + CSRF + session hardening): **admin** = akses penuh (unggah, analisis, hapus); **viewer** = **hanya dapat melihat** semua tampilan (halaman depan + dashboard admin), **tidak dapat mengunggah, mengedit, ataupun menghapus** — tombol disembunyikan dan endpoint server menolak (401/403) |
-| **Admin** | Dashboard: **Periode Data** (diambil dari **tanggal-bulan-tahun file Excel**), jumlah **Komoditas** sesuai file, **Data Tidur**, total unggahan, status layanan, riwayat unggahan |
-| | Upload **drag & drop** + preview + **mapping peran kolom** (komoditas, kualitas, kecamatan, satuan, **kuesioner**) dengan **tebakan otomatis** — pada file SHPED tebakan **Kolom Kualitas memilih "Nama Kualitas"** (bukan "Kode Kualitas") |
-| | Format **lebar** (kolom = bulan Mei/Juni/Juli …): centang kolom bulan + isi tahun. Opsi format baris telah dihapus dari UI |
-| | Analisis otomatis saat upload → langsung tampil di halaman publik & dashboard |
+| **User (publik)** | Hero hijau berfont **DM Sans** + foto Pasar Modern Tobelo; **3 kartu ringkasan** (Total Komoditas, Komoditas Data Tidur, Kelengkapan Data); **Informasi Data SHPED** dengan 4 dropdown berurutan **Jenis Dokumen → Komoditas → Tahun → Kecamatan**; **modal Metadata SHPED** + unduh kuesioner (HD-1…HD-6, HKD-1, HKD-2.1, HKD-2.2 — daftar otomatis dari `docs/kuesioner/`); **halaman Tentang Kami** tersendiri (`tentang-kami.php`) dengan jam langsung WIT |
+| **Dashboard admin** | Tabel harga bulanan, **grid grafik ala PIHPS** (4×6 per halaman), **peta harga** Leaflet per kecamatan, **Kelengkapan Data** (tab + pencarian + Unduh CSV/Excel) |
+| **Role** | **admin** = akses penuh (unggah, analisis, hapus); **viewer** = hanya melihat (endpoint server menolak tulisan 401/403, bukan hanya UI) |
+| **Upload** | Drag & drop + **mapping peran kolom dengan tebakan otomatis** (komoditas, kualitas, kecamatan, satuan, **kuesioner**), adaptasi khusus ekspor SHPED (kolom `Prev` dikecualikan, prioritas "Nama Kualitas") |
 
-**Teknologi:** PHP 8.5 · Tailwind CSS · Font Awesome 6 · **DM Sans** · Apache ECharts 5 · Leaflet · MySQL · XAMPP 8.5 · Python 3.15 + FastAPI · Pandas + NumPy · OpenPyXL
-
-> Seluruh ikon memakai **Font Awesome 6.7** (tanpa emoji). Font situs diganti seluruhnya ke
-> **[DM Sans](https://fonts.google.com/specimen/DM+Sans)** (Google Fonts, bobot 100–1000) —
-> menggantikan Inter dan Kantumruy Pro pada versi sebelumnya.
+**Teknologi lengkap:** Tailwind CSS · Font Awesome 6 · DM Sans · Apache ECharts 5 · Leaflet · MySQL · FastAPI · Pandas + NumPy · OpenPyXL.
 
 ---
 
 ## Konsep Analisis
 
-- **Komoditas** = pasangan unik **(nama + kualitas)**, mis. "Beras — Premium" dan "Beras — Medium" dihitung 2 komoditas. **Jumlah komoditas yang tampil = persis jumlah baris unik di file Excel** (Excel 600 komoditas → kartu & dashboard menampilkan 600).
-- **Kuesioner (Jenis Dokumen)** = kode kuesioner pada kolom *Kuesioner* file SHPED (mis. **HKD-1, HKD-2.1**) — tersimpan per seri di tabel `analisis_seri` dan menjadi **dropdown filter paling kiri** (label **"Jenis Dokumen"**) di Informasi Data SHPED. Memilih jenis dokumen menyaring daftar komoditas pada dropdown, panel detail, dan **card/grid grafik** agar hanya komoditas milik kuesioner itu yang tampil (grid tidak lagi terlalu banyak).
-- **Seri** = komoditas × kualitas × **kecamatan** (unit wilayah untuk peta & tabel).
+- **Komoditas** = pasangan unik **(nama + kualitas)** — "Beras — Premium" dan "Beras — Medium" = 2 komoditas.
+- **Seri** = komoditas × kualitas × **kecamatan**.
 - **Harga dianalisis per BULAN** (rata-rata bila satu bulan berisi banyak tanggal).
-- **Data tidur** = harga semua bulan **sama (konstan)** dan data **≥ 3 bulan** (`min_bulan_tidur` di `DEFAULT_CFG`). **Konstan hanya 2 bulan TIDAK dihitung data tidur** — alasannya tampil otomatis, mis. *"Harga konstan Rp 18.000/kg selama 2 bulan (November–Desember 2025) — konstan kurang dari 3 bulan, tidak dihitung data tidur"*. Bila memenuhi syarat: *"Harga konstan Rp 30.000/kg selama 3 bulan (Mei–Juli 2026)"*.
-- **Harga bergerak** = harga berubah minimal satu bulan (normal).
-- **Kelengkapan data** = seluruh komoditas: jumlah **data tidur** + jumlah **harga bergerak**; detail lengkapnya ada di tabel kelengkapan (dapat diunduh).
-- Bila file **tidak punya kolom kualitas/kecamatan/satuan**, dipakai default **"Standar" / "Tobelo" / "/kg"**.
-- Kolom waktu fleksibel: `2026-05-01`, `01/05/2026`, **nama bulan** (`Mei`, `Mei 2026`), dan pada format lebar header kolom langsung jadi bulan.
-- **Tebakan kolom bulan mengabaikan kolom berakhiran `Prev`** (ekspor SHPED: "Januari Prev" = harga bulan sebelumnya) agar harga tiap bulan tidak tercampur; kolom tetap bisa dipilih manual bila diperlukan. Tebakan **Kolom Kualitas memprioritaskan "Nama Kualitas"** di atas "Kode Kualitas"/"Status Kualitas".
-- **BOM UTF-8 pada header CSV dibuang otomatis** (file ekspor sering berawalan BOM) sehingga kolom **`Tahun`** tetap dikenali dan tahun default mengikuti isi file (bukan tahun berjalan).
+- **Data tidur** = harga semua bulan **konstan** dan **≥ 3 bulan** (`min_bulan_tidur` di `DEFAULT_CFG`). Konstan 2 bulan **tidak** dihitung — alasan otomatis berbahasa Indonesia.
+- **Ringkasan dihitung dua lapis**: `total_komoditas/total_tidur/total_bergerak` per **nama komoditas** (kartu ringkasan); status per **seri** tersimpan di `analisis_seri` (tabel, peta, grafik).
+- Pembersihan angka Indonesia (`Rp 12.500`, `1.234,56`), 30+ label bulan, **BOM UTF-8 dibuang otomatis**, format file **baris** maupun **lebar**.
+- File tanpa kolom kualitas/kecamatan/satuan memakai default **"Standar" / "Tobelo" / "/kg"**.
+
+Penjelasan teknis mendalam per file: [`docs/PENJELASAN_KODE.md`](docs/PENJELASAN_KODE.md).
 
 ---
 
-## Arsitektur & Alur Data
+## Arsitektur
 
 ```
-┌─────────────────────────── BROWSER ────────────────────────────┐
-│  Halaman Publik (user)          Dashboard Admin                │
-│  index.php + landing.js         dashboard.php / upload.php     │
-│  Tailwind + ECharts + Leaflet   Tailwind + fetch()             │
-│  (SHPED + detail + grafik)      (tabel, grafik, peta,          │
-│                                  kelengkapan — hanya di sini)  │
-└──────────────┬─────────────────────────────┬──────────────────┘
-               │ JSON (1 request)            │ upload file + mapping peran
-               ▼                             ▼
-┌────────────────── APACHE / PHP 8.5 (XAMPP 8.5.x) ──────────────┐
-│  api/data.php      → JSON landing (ringkasan + seri + titik)   │
-│  api/download.php  → unduh CSV (PHP) / Excel (proxy FastAPI)   │
-│  api/upload_file   → simpan file + catat uploads               │
-│  api/analyze       → teruskan mapping peran ke FastAPI         │
-│  login/logout/install/auth (session, CSRF, bcrypt, role)       │
-└──────────────┬─────────────────────────────────┬───────────────┘
-               │                                 │ HTTP (cURL)
-               ▼                                 ▼
-┌────────── MySQL (phpMyAdmin) ───────────┐  ┌── Python FastAPI ──────────────┐
-│ db_data_tidur                           │  │ 127.0.0.1:8000                 │
-│ ├ users (admin + viewer)                │  │ /health /inspect /analyze      │
-│ ├ uploads        (riwayat + ringkasan)◄─┼──┤ /export (xlsx/csv unduhan)     │
-│ ├ harga_bulanan  (harga per bulan)      │  │ Pandas + NumPy + OpenPyXL:     │
-│ └ analisis_seri  (hasil per seri +      │  │ baca → bersihkan → agregasi    │
-│                  kode kuesioner)        │  │ bulanan → deteksi tidur → MySQL│
-└─────────────────────────────────────────┘  └────────────────────────────────┘
+┌──────────────────────────── BROWSER ────────────────────────────┐
+│  Halaman Publik (index.php)     Dashboard (dashboard.php)       │
+└──────────────┬───────────────────────────┬──────────────────────┘
+               │ JSON                      │ upload + mapping
+               ▼                           ▼
+┌──────────── WEB (PHP 8.3 + Apache) ─────────────────────────────┐
+│  api/*.php — landing, unduh, upload, analyze (CSRF + role)      │
+└──────────────┬────────────────────────────┬─────────────────────┘
+               │                            │ HTTP proxy (cURL)
+               ▼                            ▼
+┌─── MySQL/MariaDB ───────────┐  ┌─── API (FastAPI, internal) ─────┐
+│ users · uploads             │  │ /health /inspect /analyze       │
+│ harga_bulanan · analisis_seri│ │ /export — Pandas + NumPy        │
+│ login_attempts (throttle)   │  │ deteksi tidur → tulis MySQL     │
+└─────────────────────────────┘  └─────────────────────────────────┘
 ```
 
-**Alur singkat:** Admin upload → PHP menyimpan file & mencatat `uploads` → PHP memanggil FastAPI `/analyze` → FastAPI membaca file (Pandas/OpenPyXL), **mengagregasi per bulan**, mendeteksi data tidur, **menulis ke MySQL** → halaman publik membaca lewat `api/data.php` dan menggambar semua visualisasi.
+Dalam Docker (`deploy/docker-compose.yml`) ketiga lapisan berjalan sebagai **3 service**: `db` (MySQL 8.4), `api` (uvicorn, **tidak diekspos ke publik**), `web` (Apache, satu-satunya port publik). Folder `uploads/` dibagi via shared volume; PHP mengirim `file_name` (basename) dan FastAPI me-resolve di dalam `UPLOAD_DIR` miliknya — aman lintas container.
+
+**Alur singkat:** Admin upload → PHP menyimpan file & mencatat `uploads` → PHP memanggil FastAPI `/analyze` (mengirim `file_name`) → FastAPI membaca file (Pandas/OpenPyXL), **mengagregasi per bulan**, mendeteksi data tidur, **menulis ke MySQL** → halaman publik membaca lewat `api/data.php`.
 
 ---
 
-## Struktur Folder
+## Struktur Proyek
 
 ```
-deteksi-data-tidur/
-├── README.md
-├── docs/
-│   └── PENJELASAN_KODE.md        ← penjelasan setiap file & algoritma
-├── database/
-│   └── schema.sql                ← skema MySQL (import ke phpMyAdmin)
-├── jalankan_api.bat / .sh        ← cara cepat menjalankan FastAPI
-├── app/                          ← SALIN seluruh isi folder ini ke htdocs
-│   ├── config/  config.php · db.php
-│   ├── includes/ auth.php · header.php · footer.php ·
-│   │             section_shped.php · section_grafik.php ·
-│   │             section_peta.php · section_kelengkapan.php
-│   ├── api/
-│   │   ├── data.php              ← JSON publik (landing, 1 request)
-│   │   ├── download.php          ← UNDUHAN user: CSV (PHP) / Excel (proxy)
-│   │   ├── upload_file.php       ← terima file + minta preview FastAPI
-│   │   ├── analyze.php           ← relay mapping peran → FastAPI /analyze
-│   │   ├── sample.php            ← tombol "Coba Data Contoh"
-│   │   ├── uploads.php           ← GET statistik+riwayat / POST hapus
-│   │   └── health.php            ← cek status layanan Python
-│   ├── index.php                 ← HALAMAN PUBLIK (hero, ringkasan, SHPED,
-│   │                                modal metadata + unduh kuesioner PDF —
-│   │                                tanpa banner dashboard)
-│   ├── tentang-kami.php          ← HALAMAN TENTANG KAMI (tab baru, desain
-│   │                                portofolio: jam WIT, hero profil Ros,
-│   │                                Avhan · Frida · 4 tim pengembang)
-│   ├── docs/                     ← Buku_Panduan_Deteksi_Data_Tidur.pdf
-│   │   └── kuesioner/*.pdf       ← kuesioner SHPED (HD/HKD) untuk tombol
-│   │                                "Unduh Kuesioner" di modal metadata
-│   ├── dashboard.php             ← ADMIN+VIEWER (tabel, grafik, peta, kelengkapan)
-│   ├── login.php · logout.php · upload.php · install.php
-│   ├── assets/
-│   │   ├── css/style.css         ← dropdown, tab, pagination, label peta, legenda,
-│   │   │                            animasi modal metadata
-│   │   ├── js/landing.js         ← data SHPED: kuesioner/komoditas/tahun/kecamatan,
-│   │   │                            detail, tabel, grid grafik, peta, kelengkapan
-│   │   │                            (dipakai index.php + dashboard.php, guarded)
-│   │   ├── js/upload.js          ← drag-drop, mapping format lebar
-│   │   ├── js/dashboard.js       ← statistik (komoditas, periode), riwayat
-│   │   └── img/logo.png · pasar-modern1.jpeg
-│   ├── sample/
-│   │   ├── contoh_harga.csv      ← 165 baris: 11 komoditas × 5 kecamatan × 3 bulan
-│   │   ├── contoh_harga.xlsx     ← versi Excel (format baris)
-│   │   └── contoh_harga_lebar.xlsx ← versi FORMAT LEBAR (kolom Mei/Juni/Juli)
-│   └── uploads/
-└── python-api/
-    ├── main.py                   ← FastAPI: /health /inspect /analyze /export
-    ├── analyzer.py               ← INTI: agregasi bulanan + deteksi data tidur
-    ├── db.py                     ← tulis hasil + ambil data unduhan
-    ├── config.py · requirements.txt
-    └── generate_sample.py        ← regenerasi ketiga file contoh
+data-tidur-bps-halut/
+├── index.php · dashboard.php · upload.php · login.php · logout.php
+├── install.php                ← setup + migrasi + seed akun (ENV-based)
+├── tentang-kami.php
+├── api/                       ← data · download · upload_file · analyze ·
+│                                 sample · uploads · health
+├── config/                    ← config.php (env-driven) · db.php (PDO)
+├── includes/                  ← auth.php · header · footer · section_*.php
+├── assets/                    ← css · js (landing, upload, dashboard) · img
+├── database/db_data_tidur.sql ← skema lengkap + tabel login_attempts
+├── docs/                      ← Buku Panduan PDF + kuesioner HD/HKD + PENJELASAN_KODE.md
+├── sample/                    ← contoh_harga.csv (baris) + contoh_harga_lebar.xlsx (lebar)
+├── uploads/                   ← runtime (di-gitignore; .htaccess anti-eksekusi)
+├── python-api/                ← main.py · analyzer.py · db.py · config.py ·
+│                                 tests/ (pytest) · requirements.txt
+├── deploy/                    ← Dockerfile.web · Dockerfile.api ·
+│                                 docker-compose.yml · web-entrypoint.sh
+├── scripts/                   ← smoke.sh · router-local.php
+├── jalankan_api.bat / .sh     ← cara cepat menjalankan FastAPI (XAMPP)
+├── .env.example               ← template konfigurasi (salin → .env)
+└── .hermes.md                 ← catatan konteks untuk agen
 ```
 
-**Data contoh** (Mei–Juli 2026, kecamatan Tobelo, Tobelo Barat, Galela, Kao, Wasile Selatan):
-4 komoditas **konstan** (Beras Premium, Gula Pasir, Garam Beryodium @ Rp 30.000 di Tobelo, dan Terigu Segitiga Biru) → **data tidur** (konstan **3 bulan** — memenuhi aturan minimal 3 bulan); 7 lainnya bergerak (Beras Medium, Garam Krosok, Minyak Goreng Kemasan/Curah, Telur Ayam Ras, Daging Ayam Ras, Cabai Rawit Merah).
+**Data contoh** (`sample/`): 165 baris = 11 komoditas × 5 kecamatan (Tobelo, Tobelo Barat, Galela, Kao, Wasile Selatan) × 3 bulan (Mei–Juli 2026). Hasil analisis: **4 komoditas tidur** (konstan di semua kecamatan), 7 bergerak — 20 seri tidur dari 55 seri.
 
 ---
 
-## Cara Menjalankan (XAMPP)
+## Menjalankan Lokal
 
-### Prasyarat
-- **XAMPP 8.5.x** (Apache + MySQL + PHP 8.5) — [apachefriends.org](https://www.apachefriends.org)
-- **Python 3.15** (minimal 3.12) terpasang di PATH
+### Opsi A — Docker Compose (disarankan)
 
-> Aplikasi menargetkan **PHP 8.5** (XAMPP 8.5.x) dan memakai tipe kembalian
-> `never` (PHP 8.1+) di `app/includes/auth.php`. Kode PHP sengaja tidak memakai
-> operator pipe `|>` PHP 8.5 agar semua editor (VS Code/Intelephense) tidak
-> menandai error sintaks palsu.
-
-### Langkah 1 — Database
-1. Start **Apache** dan **MySQL** dari XAMPP Control Panel.
-2. Buka `http://localhost/phpmyadmin` → **Import** → pilih `database/schema.sql` → **Go**.
-3. Pastikan database `db_data_tidur` muncul dengan tabel `users`, `uploads`, `harga_bulanan`, `analisis_seri`.
-
-> **Pernah memakai versi lama?** `schema.sql` otomatis menghapus tabel lama
-> (`harga_harian` dsb.) saat diimpor ulang — cukup import sekali lagi.
-
-### Langkah 2 — Aplikasi PHP
-1. Salin **seluruh isi folder `app/`** ke htdocs, mis. `C:\xampp\htdocs\data-tidur`.
-2. Buka `http://localhost/data-tidur/install.php` → membuat akun admin + viewer, migrasi kolom **kuesioner** pada `analisis_seri` (untuk database lama), dan folder uploads.
-3. **Hapus `install.php`** setelah selesai (disarankan).
-
-### Langkah 3 — Layanan Analisis Python
-- **Cara cepat (Windows):** klik dua kali `jalankan_api.bat` — ini cara PALING MUDAH dan bebas dari masalah PowerShell di bawah. Atau manual:
-  ```bash
-  cd python-api
-  python -m venv .venv
-  # Windows (CMD): .venv\Scripts\activate          | Linux/macOS: source .venv/bin/activate
-  # Windows (PowerShell): .venv\Scripts\Activate.ps1
-  pip install -r requirements.txt
-  python -m uvicorn main:app --host 127.0.0.1 --port 8000
-  ```
-- Cek `http://127.0.0.1:8000/health` → `{"ok": true, ...}` (kolom `uploads_dir` harus menunjuk folder uploads PHP dan `uploads_dir_ada: true`).
-
-> ⚠️ **Error PowerShell: "Activate.ps1 cannot be loaded because running scripts is
-> disabled on this system"** — ini pengaturan keamanan bawaan Windows (bukan bug
-> proyek). Pilih salah satu solusi:
->
-> 1. **Termudah:** jangan aktifkan venv lewat PowerShell — pakai **CMD**
->    (`cmd` di Start Menu) atau langsung klik dua kali **`jalankan_api.bat`**.
-> 2. Izinkan skrip hanya untuk jendela ini (sementara, hilang saat ditutup):
->    ```powershell
->    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
->    .venv\Scripts\activate
->    ```
-> 3. Izinkan permanen untuk akun Anda (tidak perlu hak admin):
->    ```powershell
->    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
->    ```
-> 4. Tanpa aktivasi venv sama sekali — panggil Python venv langsung:
->    ```powershell
->    .venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000
->    ```
-
-### Langkah 4 — Mulai Menggunakan
-| URL | Keterangan |
-|---|---|
-| `http://localhost/data-tidur/` | **Halaman publik** |
-| `http://localhost/data-tidur/login.php` | **Login** — admin `admin` / `admin123` (akses penuh) atau viewer `viewer` / `viewer123` (hanya melihat) |
-
-**Alur penggunaan:**
-1. Login admin → **Dashboard** (kartu **Periode Data** tampil sesuai file terakhir).
-2. **Coba Data Contoh** (uji cepat) **atau** **Upload Data Baru**.
-3. Di halaman upload: tarik file → sistem **menebak peran kolom & kolom bulan otomatis** → sesuaikan bila perlu (pilih juga **Kolom Kuesioner**, mis. `Kuesioner` → HKD-1/HKD-2.1) → **Mulai Analisis**. Centang kolom bulan (Mei, Juni, …) dan isi tahun.
-4. Hasil: jumlah **Komoditas**, **Data Tidur**, **Harga Bergerak**, dan **Periode** dari file.
-5. **Halaman publik** menampilkan ringkasan + **Informasi Data SHPED** (filter Kuesioner → Komoditas → Tahun → Kecamatan + detail + grafik tren).
-6. **Dashboard admin** (admin & viewer) memuat bagian **Data & Analisis SHPED**: tabel harga bulanan, grid grafik, peta harga, dan kelengkapan data (dapat diunduh).
-7. **Akun viewer** hanya melihat: semua tombol unggah/edit/hapus disembunyikan dan endpoint server menolak permintaan tulis (401/403).
-
-### Mengganti Password Admin
 ```bash
-php -r "echo password_hash('passwordBaruAnda', PASSWORD_DEFAULT);"
+cp .env.example .env          # isi password
+docker compose -f deploy/docker-compose.yml --env-file .env up -d --build
+docker compose -f deploy/docker-compose.yml ps      # 3 service healthy
+# buka http://localhost:8090 → install.php sekali → login
 ```
-Lalu di phpMyAdmin: `UPDATE users SET password='HASIL_DI_ATAS' WHERE username='admin';`
+
+Skema database terimpor otomatis saat pertama kali (`docker-entrypoint-initdb.d`). Akun admin/viewer dibuat dari `.env` (`INSTALL_ADMIN_USERNAME/PASSWORD`, dst.) saat membuka `install.php` pertama kali — **hapus install.php setelahnya**.
+
+### Opsi B — XAMPP klasik
+
+1. Start Apache + MySQL → impor `database/db_data_tidur.sql` via phpMyAdmin.
+2. Salin isi repo ke `C:\xampp\htdocs\data-tidur`.
+3. Jalankan layanan analisis: klik dua kali `jalankan_api.bat` (auto-venv + bersihkan port 8000). Cek `http://127.0.0.1:8000/health` → `"uploads_dir_ada": true`.
+4. Buka `http://localhost/data-tidur/install.php` sekali → login.
+
+> Bila PowerShell menolak `Activate.ps1` ("running scripts is disabled"), pakai CMD atau panggil langsung `.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000`.
+
+### Opsi C — Native Windows tanpa Docker
+
+Contoh stack tanpa Docker & tanpa XAMPP: PHP CLI (winget) + **MariaDB portable** (folder `.local-stack/`, di-gitignore) + venv FastAPI:
+
+```bash
+# 1) Skema + user aplikasi
+mariadb -u root < database/db_data_tidur.sql
+# 2) Layanan analisis (port 8000)
+cd python-api && python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+# 3) Web (port 8090; router memblokir .env/.git/.local-stack)
+PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8090 scripts/router-local.php
+```
+
+> **`php -S` tidak memproses `.htaccess`** — security headers & proteksi uploads/ hanya aktif penuh di Apache (Opsi A/B) atau Dokploy.
+
+---
+
+## Deploy Produksi ke Dokploy
+
+1. Push repo ke GitHub (`ilhamrizanto/data-tidur-bps-halut`, branch `main`).
+2. Dokploy → **Create Service → Compose** → hubungkan repo, branch `main`, **Compose Path**: `deploy/docker-compose.yml`.
+3. Tab **Environment** — isi semua variabel dari `.env.example` dengan nilai produksi (password kuat, `APP_DEBUG=0`, `APP_FORCE_HTTPS=1`, `APP_BEHIND_PROXY=1`).
+4. **Deploy** → tunggu 3 service healthy.
+5. Pasang **Domain** ke service `web` (port 80) — TLS otomatis oleh proxy Dokploy.
+6. Buka `https://domain/install.php` **SEKALI** (membuat akun + tabel `login_attempts`) → **hapus install.php**.
+7. (Opsional) aktifkan webhook auto-deploy.
+
+## Environment Variables
+
+| Variabel | Default | Keterangan |
+|---|---|---|
+| `DB_HOST` / `DB_NAME` / `DB_USER` / `DB_PASS` | `127.0.0.1` / `db_data_tidur` / `root` / kosong | Koneksi MySQL (PHP + Python) |
+| `API_BASE` | `http://127.0.0.1:8000` | Alamat FastAPI dari sisi PHP (Docker: `http://api:8000`) |
+| `UPLOAD_DIR` | auto-detect | Folder unggahan bersama PHP ↔ Python (Docker api: `/data/uploads`) |
+| `APP_DEBUG` | `0` | `1` = detail error tampil di respons (lokal saja) |
+| `APP_FORCE_HTTPS` | `0` | `1` = cookie `Secure` (produksi di balik TLS) |
+| `APP_BEHIND_PROXY` | `0` | `1` = percayai `X-Forwarded-For` (throttle IP akurat) |
+| `APP_TZ` | `Asia/Jayapura` | Zona waktu tampilan (**WIT**) |
+| `CORS_ORIGINS` | kosong (deny) | Daftar origin CORS FastAPI, koma; kosong = tanpa CORS |
+| `MYSQL_ROOT_PASSWORD` | — | Compose: password root MySQL |
+| `INSTALL_ADMIN_USERNAME` / `INSTALL_ADMIN_PASSWORD` | `admin` / acak-tampil-sekali | Akun admin saat install |
+| `INSTALL_VIEWER_USERNAME` / `INSTALL_VIEWER_PASSWORD` | `viewer` / acak-tampil-sekali | Akun viewer saat install |
+| `WEB_PORT` | `8090` | Compose: port host untuk web |
+
+---
+
+## Pengujian
+
+```bash
+# 1) Unit — net karakterisasi analyzer (golden sample SHPED)
+cd python-api && python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt -r requirements-dev.txt
+.venv\Scripts\python -m pytest tests -q
+# expected: 4 passed
+
+# 2) Integration — stack harus hidup
+ADMIN_PASS='...' bash scripts/smoke.sh http://localhost:8090
+# expected: login 302 → sample ok → landing golden 55 seri/4 tidur/7 bergerak → SMOKE OK
+```
+
+## Keamanan
+
+- PDO prepared statement di semua query; `EMULATE_PREPARES=false`.
+- CSRF token di semua endpoint mutasi (form login & header `X-CSRF-Token`).
+- bcrypt + role check dua lapis (UI disembunyikan **dan** endpoint menolak 401/403).
+- **Throttle login**: maks 5 gagal per IP+username per 15 menit (tabel `login_attempts`).
+- `session_regenerate_id` saat login; cookie httponly + SameSite=Lax + `Secure` (`APP_FORCE_HTTPS`).
+- Redaksi pesan error DB di belakang `APP_DEBUG` (detail hanya ke `error_log` server).
+- **Tanpa kredensial default**: akun dibuat dari ENV, atau password acak yang tampil sekali di `install.php`.
+- Anti path traversal berlapis: nama file acak + `realpath` PHP + `_safe_path(file_name)` FastAPI.
+- `uploads/.htaccess`: eksekusi skrip ditolak + directory listing mati; root `.htaccess`: security headers.
+- CORS FastAPI **default-deny** (browser tidak pernah memanggil api langsung).
 
 ---
 
@@ -227,21 +194,21 @@ Lalu di phpMyAdmin: `UPDATE users SET password='HASIL_DI_ATAS' WHERE username='a
 ### PHP (dipakai halaman web)
 | Endpoint | Metode | Keterangan |
 |---|---|---|
-| `api/data.php?action=landing[&tahun=YYYY]` | GET | **Publik.** Ringkasan + seluruh seri (komoditas × kualitas × kecamatan **+ kuesioner**) + titik harga bulanan (1 request) + `tahun_tersedia` (daftar tahun dari **semua unggahan** untuk dropdown Tahun). `&tahun=2025` memuat unggahan yang memuat tahun itu |
-| `api/download.php?format=csv\|xlsx[&upload_id=][&tahun=]` | GET | **Publik.** Unduh seluruh data (harga bulanan + status). CSV dibuat PHP; Excel diproxy ke FastAPI. Tanpa parameter = unggahan terbaru; `&tahun=2025` mengikuti tahun yang dipilih |
-| `api/upload_file.php` | POST multipart | **Admin.** Simpan file → `upload_id` + kolom + preview + tebakan (mode & peran kolom, termasuk `kuesioner_col`) |
-| `api/analyze.php` | POST JSON | **Admin.** `{upload_id, mode, komoditas_col, kualitas_col?, kecamatan_col?, satuan_col?, kuesioner_col?, value_col, time_col, month_cols?, tahun_default?}` |
+| `api/data.php?action=landing[&tahun=YYYY]` | GET | **Publik.** Ringkasan + seluruh seri (+ kuesioner) + titik harga bulanan (1 request) + `tahun_tersedia` |
+| `api/download.php?format=csv\|xlsx[&upload_id=][&tahun=]` | GET | **Publik.** Unduh seluruh data. CSV dibuat PHP; Excel diproxy ke FastAPI |
+| `api/upload_file.php` | POST multipart | **Admin.** Simpan file → `upload_id` + kolom + preview + tebakan |
+| `api/analyze.php` | POST JSON | **Admin.** `{upload_id, mode, komoditas_col, ..., file_name otomatis}` |
 | `api/sample.php` | POST | **Admin.** Analisis data contoh |
-| `api/uploads.php` | GET / POST | GET: **admin + viewer** (statistik + riwayat). POST hapus: **admin saja** (viewer → 403) |
+| `api/uploads.php` | GET / POST | GET: **admin + viewer**. POST hapus: **admin saja** (viewer → 403) |
 | `api/health.php` | GET | Status layanan FastAPI |
 
-### Python FastAPI (http://127.0.0.1:8000)
+### Python FastAPI (internal)
 | Endpoint | Keterangan |
 |---|---|
 | `GET /health` | Cek layanan + diagnosis folder uploads |
-| `POST /inspect` | Multipart file → `{columns, preview, total_rows, guess{mode, *_col, kuesioner_col, month_cols, tahun_default}}` |
-| `POST /analyze` | `{file_path, upload_id, mapping, cfg?}` → ringkasan + meta seri **termasuk `kuesioner`** (tanpa titik) |
-| `GET /export?upload_id=&format=xlsx\|csv` | **Publik.** File unduhan seluruh data (dipakai `api/download.php`) |
+| `POST /inspect` | Multipart file → `{columns, preview, total_rows, guess}` |
+| `POST /analyze` | `{file_path, file_name?, upload_id, mapping, cfg?}` → ringkasan + meta seri (tanpa titik) |
+| `GET /export?upload_id=&format=xlsx\|csv` | **Publik.** File unduhan (dipakai `api/download.php`) |
 
 Contoh respons ringkasan `/analyze`:
 ```json
@@ -250,7 +217,7 @@ Contoh respons ringkasan `/analyze`:
                "total_tidur": 4, "total_bergerak": 7, "jumlah_bulan": 3,
                "periode_mulai": "2026-05-01", "periode_selesai": "2026-07-31"},
  "seri": [{"komoditas": "Beras Premium", "kualitas": "Premium", "kecamatan": "Tobelo",
-           "is_tidur": true, "alasan_tidur": "Harga konstan Rp 30.000/kg selama 3 bulan (Mei–Juli 2026)", ...}]}
+           "is_tidur": true, "alasan_tidur": "Harga konstan Rp 30.000/kg selama 3 bulan (Mei–Juli 2026)"}]}
 ```
 
 ---
@@ -259,21 +226,35 @@ Contoh respons ringkasan `/analyze`:
 
 | Masalah | Solusi |
 |---|---|
-| **Analisis gagal (HTTP 422) / "Tidak ada baris valid"** | Server menemukan 0 data yang bisa dianalisis. Pesan error kini memuat **diagnosis lengkap**: berapa sel harga terbaca + contoh isian yang gagal, dan label bulan mana yang tidak dikenali. Penyebab umum: (1) header bulan berupa **angka polos "1"–"12"** — SUDAH DIPERBAIKI di versi ini, gunakan zip terbaru; (2) kolom harga dipetakan ke kolom non-harga (mis. kolom teks); (3) tahun tidak diisi pada mode lebar. Catatan: bila pesan yang muncul hanya "Analisis gagal (HTTP 422)" tanpa diagnosis, berarti file `app/api/analyze.php` masih versi lama — perbarui dari zip terbaru |
-| **`ERROR: [Errno 10048] error while attempting to bind on address ('127.0.0.1', 8000)`** | **Port 8000 masih dipakai proses lama** (biasanya uvicorn sebelumnya yang belum ditutup — cek tab terminal lain di VS Code, mungkin masih jalan; hentikan dengan Ctrl+C). Cara membersihkan: klik dua kali **`jalankan_api.bat`** (otomatis mematikan proses lama), atau manual: `netstat -ano | findstr :8000` → catat PID di kolom terakhir baris LISTENING → `taskkill /PID <PID> /F` → jalankan ulang uvicorn. Verifikasi: `http://127.0.0.1:8000/health` |
-| **Upload gagal / muncul "204 No Content"** | Respons kosong = permintaan tidak pernah sampai ke aplikasi. Urutan pengecekan: (1) jalankan `jalankan_api.bat` — versi baru otomatis mematikan proses lama di port 8000; (2) muat ulang halaman (Ctrl+F5) dan pastikan kotak **"Layanan analisis aktif"** berwarna hijau di atas form upload; (3) matikan sementara antivirus / ekstensi browser yang memfilter unggahan (Avast/AVG Web Shield, ad-blocker) lalu coba lagi; (4) pastikan membuka aplikasi lewat **Apache** (`http://localhost/deteksi-data-tidur/`), bukan `http://127.0.0.1:8000` |
-| "Layanan analisis (FastAPI) tidak dapat dihubungi" | Jalankan `jalankan_api.bat` / perintah uvicorn; cek `http://127.0.0.1:8000/health` |
-| Chip **API Offline** di dashboard | Layanan Python belum jalan — dashboard & halaman publik tetap bisa membaca data lama; **unduhan Excel** butuh API aktif (unduhan CSV tetap jalan) |
-| "Koneksi database gagal" | Pastikan MySQL jalan di XAMPP dan `schema.sql` sudah diimpor (versi baru: tabel `harga_bulanan`) |
-| Upload file besar selalu gagal | Naikkan `upload_max_filesize` dan `post_max_size` di `C:\xampp\php\php.ini` (mis. 20M) lalu **restart Apache**; pesan error kini menyebutkan kode error PHP secara spesifik |
-| Kode terbaru tidak muncul / perilaku lama | (1) **Tutup lalu jalankan ulang** `jalankan_api.bat` — proses Python lama tetap memakai kode lama walau file sudah diganti; (2) browser: Ctrl+F5 (cache JS/CSS sudah otomatis di-bust via versi file, tapi hard refresh lebih aman); (3) pastikan hanya ADA SATU salinan proyek di htdocs — hapus salinan ganda di folder Downloads |
-| Jumlah komoditas tidak sesuai harapan | Cek mapping **kolom kualitas** — "Beras Premium" & "Beras Medium" dihitung 2 komoditas; tanpa kolom kualitas keduanya menyatu |
-| **Dropdown Jenis Dokumen kosong / hanya "Semua Jenis Dokumen"** | Data yang sedang tampil dianalisis **sebelum fitur ini ada** (kolom kuesioner belum tersimpan). Solusi: buka `install.php` sekali (menambah kolom `kuesioner` di `analisis_seri`), lalu **unggah ulang** file dengan **Kolom Kuesioner** dipilih di halaman upload (mis. kolom `Kuesioner` → HKD-1/HKD-2.1) dan analisis kembali |
-| **Login viewer gagal** | Akun `viewer` / `viewer123` dibuat oleh `install.php` versi baru; bila database lama dibuat sebelum update, jalankan `install.php` sekali untuk menambah role viewer (atau import ulang `schema.sql` — hati-hati: menghapus data unggahan) |
-| Peta kecamatan tidak muncul | Nama kecamatan di Excel harus cocok dengan `KOORDINAT_KEC` di `landing.js` (daftar 23 kecamatan Halmahera Utara; tambahkan/sesuaikan bila perlu) |
-| Peta/grafik kosong | CDN (Tailwind/ECharts/Leaflet/OSM) butuh internet saat pertama load |
-| Excel `.xls` lama ditolak | Simpan ulang sebagai `.xlsx` (OpenPyXL hanya membaca `.xlsx`) |
-| Ganti port FastAPI | Ubah `API_BASE` di `app/config/config.php` |
-| File sudah diunggah tapi tidak muncul | Lihat kolom **Status** di riwayat dashboard (Proses/Gagal + pesan) |
+| Analisis gagal 422 | Pesan memuat diagnosis (jumlah sel terbaca + contoh gagal + bulan tak dikenali). Umum: kolom harga salah peta, mode lebar tanpa kolom bulan/tahun |
+| Port 8000 terpakai (`Errno 10048`) | `jalankan_api.bat` otomatis membersihkan; manual: `netstat -ano \| findstr :8000` → `taskkill /PID <PID> /F` |
+| "Layanan analisis tidak dapat dihubungi" | Jalankan uvicorn / `jalankan_api.bat`; cek `/health`; di Docker pastikan service `api` healthy |
+| 400 "Path file tidak diizinkan" | `UPLOAD_DIR` PHP ≠ milik api — bandingkan `uploads_dir` di `/health`; di Docker `file_name` sudah otomatis |
+| Upload gagal "204 No Content" | Antivirus/ad-blocker memfilter; pastikan lewat Apache, bukan `:8000` |
+| "Koneksi database gagal" | MySQL/MariaDB jalan? `database/db_data_tidur.sql` sudah diimpor? kredensial env benar? |
+| "Terlalu banyak percobaan gagal" | Throttle login aktif — tunggu 15 menit, atau bersihkan tabel `login_attempts` |
+| Upload besar gagal | Naikkan `upload_max_filesize` & `post_max_size` di php.ini (XAMPP), restart Apache |
+| Dropdown Jenis Dokumen kosong | Data lama belum punya kolom kuesioner — buka `install.php` sekali, unggah ulang dengan **Kolom Kuesioner** dipilih |
+| Peta kecamatan tidak muncul | Nama kecamatan harus cocok `KOORDINAT_KEC` di `landing.js` (23 kecamatan Halut) |
+| Peta/grafik kosong | CDN (Tailwind/ECharts/Leaflet/OSM) butuh internet saat load pertama |
+| Excel `.xls` ditolak | Simpan ulang sebagai `.xlsx` (OpenPyXL hanya baca `.xlsx`) |
+| Ganti port FastAPI | `API_BASE` di env (Docker: service `api`) |
+| File diunggah tapi tak muncul | Kolom **Status** di riwayat dashboard (Proses/Gagal + pesan) |
 
 ---
+
+## Dokumen Pendukung
+
+- **Buku Panduan**: `docs/Buku_Panduan_Deteksi_Data_Tidur.pdf`
+- **Kuesioner SHPED 2026**: `docs/kuesioner/` (HD-1…HD-6, HKD-1, HKD-2.1, HKD-2.2)
+- **Penjelasan kode per file**: `docs/PENJELASAN_KODE.md`
+
+## Tim
+
+Profil lengkap di halaman **Tentang Kami**: **Ros** (Ketua Tim Distribusi), **Avhan** (Anggota), mentor **Frida**, dan Tim Pengembang Website — BPS Kab. Halmahera Utara.
+
+## Pengembangan
+
+- Konteks agen/developer: `.hermes.md`; riwayat kerja: `HANDOVER.md`.
+- Konvensi commit: conventional commits, satu concern per commit.
+- Net regresi: `python-api/tests/` — perubahan `analyzer.py` wajib lolos pytest dulu.

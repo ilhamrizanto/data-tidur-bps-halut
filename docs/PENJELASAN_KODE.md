@@ -18,11 +18,11 @@ Dokumen ini menjelaskan **setiap file** pada proyek *Deteksi Data Tidur — Info
 
 ---
 
-## 1. Lapisan Database — `database/schema.sql`
+## 1. Lapisan Database — `database/db_data_tidur.sql`
 
 | Tabel | Peran |
 |---|---|
-| `users` | Akun dengan role **`admin`** (akses penuh) dan **`viewer`** (hanya melihat). Password **bcrypt** (`password_hash`). Akun default dibuat `install.php`: `admin/admin123` dan `viewer/viewer123`. |
+| `users` | Akun dengan role **`admin`** (akses penuh) dan **`viewer`** (hanya melihat). Password **bcrypt** (`password_hash`). Akun dibuat `install.php` dari **environment variable** `INSTALL_ADMIN_USERNAME/PASSWORD` & `INSTALL_VIEWER_USERNAME/PASSWORD`; password kosong = diacak & ditampilkan sekali. **Tanpa kredensial default.** |
 | `uploads` | Satu baris per file unggahan: nama file, status (`processing`/`done`/`failed`), dan **ringkasan**: `total_baris`, `total_seri`, **`total_komoditas`** (unik nama+kualitas — sesuai isi Excel), **`total_tidur`**, **`total_bergerak`**, `periode_mulai/selesai` (dari tanggal-bulan-tahun file). Kartu dashboard & halaman publik membaca tabel ini — cepat tanpa agregasi ulang. |
 | `harga_bulanan` | **Harga per BULAN**: 1 baris = 1 harga satu bulan untuk 1 kombinasi **komoditas × kualitas × kecamatan** (kolom `bulan` bertipe DATE = tanggal 1). Sumber titik semua grafik, tabel bulanan, dan peta. |
 | `analisis_seri` | Hasil analisis per seri: **`kuesioner`** (kode kuesioner file SHPED — HKD-1, HKD-2.1 — sumber dropdown filter), `jumlah_bulan`, harga awal/akhir/min/max, `perubahan_persen`, **`is_tidur`**, `alasan_tidur`, `bulan_mulai/selesai`. |
@@ -36,7 +36,7 @@ Dokumen ini menjelaskan **setiap file** pada proyek *Deteksi Data Tidur — Info
 ## 2. Lapisan Python — `python-api/`
 
 ### `config.py`
-Pusat konfigurasi Python: kredensial MySQL (harus identik dengan `app/config/config.php`) dan **UPLOAD_DIR** — lokasi folder uploads PHP, dicocokkan otomatis dari daftar path XAMPP umum. FastAPI **hanya diizinkan membaca file di dalam folder ini** (lihat `_safe_path`).
+Pusat konfigurasi Python — **env-driven**: `DB_HOST/DB_USER/DB_PASS/DB_NAME` (default identik dengan XAMPP), **UPLOAD_DIR** (env override → auto-deteksi path XAMPP umum), dan `CORS_ORIGINS` (kosong = tanpa CORS). FastAPI **hanya diizinkan membaca file di dalam folder ini** (lihat `_safe_path`).
 
 ### `analyzer.py` — inti algoritma
 - **`_clean_number(v)`** — pembersih angka: membuang `Rp`/simbol, menentukan pemisah desimal dari tanda **paling kanan** (`1.234,56` Indonesia vs `1,234.56` Inggris vs `12.500` dibaca ribuan).
@@ -82,8 +82,8 @@ Pusat konfigurasi Python: kredensial MySQL (harus identik dengan `app/config/con
 - **`upload.php`** — dropzone + preview + panel mapping: **format lebar (kolom = bulan) satu-satunya format**; 5 select peran (Komoditas*, Kualitas, Kecamatan, Satuan, **Kuesioner** — empat terakhir opsional), **chip kolom bulan** auto-terpilih + **Tahun**, panel hasil 4 kotak (Komoditas, Data Tidur, Harga Bergerak, **Periode**). Khusus admin (`require_admin()`).
 - **`index.php`** — halaman publik: hero hijau (DM Sans) + foto pasar; **3 kartu ringkasan** (untuk admin/viewer menuju `dashboard.php#grafik` / `dashboard.php#kelengkapan`); bagian **Informasi Data SHPED** (include `section_shped.php` **tanpa** tabel — tabel kini hanya di dashboard); kartu **"Metadata Kegiatan Statistik — SHPED"** yang membuka **pop-up/modal** (`#modalMetadata`) berisi tabel metadata 16 komponen (Nama Kegiatan s.d. Diseminasi — sesuai dokumen metadata BPS) + **kotak "Unduh Kuesioner SHPED (PDF)" di bawah baris Diseminasi** — tombol **Pilih Kuesioner** membuka panel daftar PDF (grup HD & HKD) yang dibaca **otomatis oleh PHP dari `app/docs/kuesioner/*.pdf`** (tautan `download`; daftar ikut berubah bila file di folder ditambah/dihapus); + **Deskripsi Singkat Kegiatan**; modal ditutup via tombol ✕ / **Tutup** / klik area gelap di luar panel (`#modalMetadataArea`) / tombol **Esc**, dengan animasi `.md-backdrop`/`.md-panel` dari `style.css`. Bagian **Tentang Kami in-page SUDAH DIHAPUS** — seluruh profil tim kini ada di halaman `tentang-kami.php` (dibuka dari menu navigasi di tab baru). Banner pengarah ke dashboard + tombol **Buka Dashboard** sudah **dihapus** dari halaman publik. **Tidak lagi memuat** grid grafik, peta, dan kelengkapan data.
 - **`tentang-kami.php`** — **halaman "Tentang Kami" tersendiri, dibuka di TAB BARU** saat menu Tentang Kami diklik (desktop & mobile memakai `target="_blank"`). Desain **ala halaman portofolio**: nav minimalis (logo kiri · menu tengah · **lokasi + jam langsung WIT `Asia/Jayapura` + tombol gelap "Unduh Buku Panduan"** kanan), **hero split** — kartu profil gradient (inisial "R") + sapaan besar "Halo! Saya Ros" di kiri, judul jabatan besar + deskripsi + tombol **Lihat Tim Pengembang** (anchor `#pengembang`) dan **Kembali ke Beranda** di kanan — serta **4 ikon mengambang melingkar di sisi kanan layar** (Beranda, Informasi SHPED, unduh Buku Panduan, kembali ke atas). Isi mengikuti urutan permintaan: **1)** **Ros** (Ketua Tim Distribusi — hero utama), **2)** **Avhan** (Anggota Tim Distribusi), **3)** **Frida** (Mentor), **4)** **Tim Pengembang Website 4 orang** + deskripsi keahlian masing-masing (nama masih placeholder — ganti di blok ber-comment "GANTI NAMA"). Halaman ini berdiri sendiri (head Tailwind/DM Sans sendiri, `require auth.php` untuk helper `e()`), lengkap menu mobile, dan footer tautan Beranda/Buku Panduan.
-- **`login.php`** — form login **admin & viewer**: memverifikasi `role IN ('admin','viewer')` via bcrypt, menyimpan `$_SESSION['admin_role']`; info akun default di kotak bawah.
-- **`install.php`** — setup + **migrasi otomatis**: tabel `users` (role admin/viewer), seed akun `admin/admin123` & `viewer/viewer123`, penambahan kolom `kuesioner` pada `analisis_seri` bila belum ada, folder uploads.
+- **`login.php`** — form login **admin & viewer**: memverifikasi `role IN ('admin','viewer')` via bcrypt, menyimpan `$_SESSION['admin_role']`; **throttle anti-bruteforce**: maks 5 login gagal per IP+username per 15 menit via tabel `login_attempts` (IP klien dari `client_ip()`, sadar `X-Forwarded-For` saat `APP_BEHIND_PROXY=1`).
+- **`install.php`** — setup + **migrasi otomatis**: tabel `users` (role admin/viewer), **tabel `login_attempts`** (throttle produksi), seed akun **dari ENV** (password kosong = acak & tampil sekali), penambahan kolom `kuesioner` pada `analisis_seri` bila belum ada, folder uploads.
 
 ### Endpoint API
 - **`api/data.php?action=landing`** — publik; satu request: ringkasan dari `uploads` + semua seri dari `analisis_seri` **(kini termasuk `kuesioner`)** + titik bulanan dari `harga_bulanan` (key join `komoditas|kualitas|kecamatan`). Serialisasi memakai `array_values()` biasa (bukan pipe operator PHP 8.5, agar editor tidak menandai error sintaks). Tanggap `&tahun=YYYY` → memuat unggahan terbaru yang benar-benar punya harga pada tahun itu; respons selalu memuat **`tahun_tersedia`** (GROUP BY `YEAR(bulan)` atas **semua** unggahan `done` + meta unggahan per tahun) — sumber dropdown Tahun multi-file (2025 & 2026 sekaligus). Di `landing.js`: memilih tahun yang sudah ada di data termuat cukup **filter lokal**; tahun milik unggahan lain → `muatDataTahun()` memuat ulang dari server dan mempertahankan pilihan kuesioner/komoditas/kecamatan bila masih ada.
@@ -151,3 +151,15 @@ Hasil uji aktual: `total_komoditas=11, total_tidur=4, total_bergerak=7, periode 
 | Hak akses viewer | `includes/auth.php`, `dashboard.php`, endpoint `api/*.php` |
 | Durasi maks / format file | `config/config.php` |
 | Data contoh lain | `python-api/generate_sample.py` lalu jalankan ulang |
+
+---
+
+## 8. Perubahan Versi Produksi (Docker/Dokploy)
+
+Versi produksi menambahkan lapisan di atas arsitektur di atas tanpa mengubah alur data:
+
+- **Konfigurasi 12-factor**: `config/config.php` (PHP) dan `python-api/config.py` (Python) membaca env — `DB_*`, `API_BASE`, `UPLOAD_DIR`, `APP_DEBUG`, `APP_FORCE_HTTPS`, `APP_BEHIND_PROXY`, `APP_TZ` (default `Asia/Jayapura`/WIT), `CORS_ORIGINS`. Tanpa env → perilaku identik setup XAMPP.
+- **Container** (`deploy/`): `web` (php:8.3-apache + pdo_mysql/curl, AllowOverride All, entrypoint chown uploads), `api` (python:3.12-slim + uvicorn, internal saja), `db` (mysql:8.4 + init skema otomatis via `docker-entrypoint-initdb.d`). `uploads/` dibagi via volume `uploads_data`.
+- **Resolve file lintas kontainer**: `api/analyze.php` & `api/sample.php` kirim `file_name` (basename) → `_safe_path()` FastAPI me-resolve di dalam `UPLOAD_DIR`-nya sendiri; validasi realpath legacy tetap jalan di mode lokal.
+- **Keamanan tambahan**: throttle login (`login_attempts`), redaksi error via `err_detail()` di balik `APP_DEBUG`, cookie `Secure` via `APP_FORCE_HTTPS`, security headers `.htaccess` root, CORS default-deny, install.php tanpa kredensial default.
+- **Pengujian**: `python-api/tests/` (4 pytest golden) + `scripts/smoke.sh` (end-to-end login → sample → landing → unduh).
